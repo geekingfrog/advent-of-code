@@ -4,6 +4,7 @@ import System.Environment (getArgs)
 import Control.Monad (liftM)
 import qualified Day01 as D01
 import qualified Day02 as D02
+import qualified Day03 as D03
 
 main :: IO ()
 main = do
@@ -13,4 +14,6 @@ main = do
     12 -> D01.answer2 >>= print
     21 -> D02.answer1 >>= print
     22 -> D02.answer2 >>= print
+    31 -> D03.answer1 >>= print
+    32 -> D03.answer2 >>= print
     _ -> print "not done yet"
