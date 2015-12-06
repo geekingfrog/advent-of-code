@@ -17,5 +17,7 @@ executable adventofcode
   build-depends:       base >= 4.7 && < 5,
                        split >= 0.2 && < 0.3,
                        pureMD5 >= 2.1 && < 2.2,
-                       bytestring >= 0.10 && < 0.11
+                       bytestring >= 0.10 && < 0.11,
+                       megaparsec >= 4.2 && < 4.3,
+                       vector >= 0.11 && < 0.12
   ghc-options: -O2
