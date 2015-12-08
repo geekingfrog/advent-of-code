@@ -19,5 +19,8 @@ executable adventofcode
                        pureMD5 >= 2.1 && < 2.2,
                        bytestring >= 0.10 && < 0.11,
                        megaparsec >= 4.2 && < 4.3,
-                       vector >= 0.11 && < 0.12
+                       vector >= 0.11 && < 0.12,
+                       unordered-containers >= 0.2 && < 0.3,
+                       hashable >= 1.2 && < 1.3,
+                       mtl >= 2.2 && < 2.3
   ghc-options: -O2
