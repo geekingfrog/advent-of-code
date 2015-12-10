@@ -1,5 +1,7 @@
 module Day10 (answer1, answer2) where
 
+import Data.List (group)
+
 answer1 :: Int
 answer1 = length $ fullSequence !! 40
 
@@ -9,12 +11,7 @@ answer2 = length $ fullSequence !! 50
 fullSequence = iterate (expandList . groupList) input
 
 groupList :: Eq a => [a] -> [(Int, a)]
-groupList [] = []
-groupList (x:xs) = go 1 x xs
-  where go acc x [] = [(acc, x)]
-        go acc x (y:ys)
-          | x == y = go (acc+1) x ys
-          | otherwise = (acc, x) : go 1 y ys
+groupList xs = map (\l -> (length l, head l)) (group xs)
 
 expandList :: [(Int, Int)] -> [Int]
 expandList xs = reverse $ go xs []
