@@ -20,6 +20,7 @@ import qualified Day15 as D15
 import qualified Day16 as D16
 import qualified Day17 as D17
 import qualified Day18 as D18
+import qualified Day19 as D19
 
 main :: IO ()
 main = do
@@ -61,4 +62,6 @@ main = do
     172 -> print D17.answer2
     181 -> D18.answer1 >>= print
     182 -> D18.answer2 >>= print
+    191 -> print D19.answer1
+    192 -> print D19.answer2
     _ -> print "not done yet"
