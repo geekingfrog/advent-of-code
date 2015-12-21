@@ -12,7 +12,8 @@ extra-deps: [
   megaparsec-4.2.0,
   vector-0.11.0.0,
   aeson-0.10.0.0,
-  attoparsec-0.13.0.1
+  attoparsec-0.13.0.1,
+  KMP-0.1.0.2
 ]
 
 # Override default flag values for local packages and extra-deps
