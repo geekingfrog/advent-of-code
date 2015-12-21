@@ -68,6 +68,6 @@ main = do
     192 -> print D19.answer2
     201 -> print D20.answer1
     202 -> print D20.answer2
-    211 -> print D20.answer1
-    212 -> print D20.answer2
+    211 -> print D21.answer1
+    212 -> print D21.answer2
     _ -> print "not done yet"
