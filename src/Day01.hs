@@ -1,6 +1,7 @@
 module Day01 (answer1, answer2) where
 
 import Data.List (foldl', scanl)
+import Control.Monad (liftM)
 
 answer1 :: IO Int
 answer1 = do
@@ -16,7 +17,8 @@ answer2 = do
   return $ fst firstBasement
 
 getData :: IO String
-getData = readFile "./data/01.txt" >>= return . filter (\c -> c == '(' || c == ')')
+getData = liftM (filter (\c -> c == '(' || c == ')')) $ readFile "./data/01.txt"
 
 folder acc '(' = acc + 1
 folder acc ')' = acc - 1
+folder _ _ = undefined
