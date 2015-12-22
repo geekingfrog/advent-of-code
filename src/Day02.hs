@@ -20,5 +20,7 @@ getData = do
   return dims
 
 giftWrap (l:w:h:_) = l*w + 2 * (l*w + w*h + h*l)
+giftWrap _ = undefined -- keep -Wall happy
 
 giftRibbon (l:w:h:_) = 2 * (l+w) + l*w*h
+giftRibbon _ = undefined -- keep -Wall happy

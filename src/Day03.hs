@@ -28,6 +28,7 @@ move (x,y) 'v' = (x, y-1)
 move (x,y) '^' = (x, y+1)
 move (x,y) '>' = (x+1, y)
 move (x,y) '<' = (x-1, y)
+move _ _ = undefined
 
 takeEven [] = []
 takeEven l = go l True
