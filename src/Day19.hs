@@ -2,20 +2,23 @@ module Day19 (answer1, answer2) where
 
 import Data.Char (isUpper)
 import qualified Data.HashMap.Strict as M
-import Data.Maybe (fromMaybe)
-import Data.List (nub)
+import Data.Maybe (fromMaybe, isJust, fromJust, catMaybes)
+import Data.List (nub, maximumBy)
+import Data.Ord (comparing)
+import Control.Arrow (second)
+import Data.Algorithms.KMP (build, match)
+import Control.Monad (liftM)
+
+data Rose a = Rose a [Rose a] deriving (Show, Eq)
 
 answer1 :: Int
 answer1 = length . nub $ replace mapReplacements (split input)
 
 answer2 :: Int
 answer2 = let
-  allMolecules = iterate (nub . concatMap (replace mapReplacements . split)) ["e"]
-  withSteps = zip [0..] allMolecules
-  -- hasMedicine xs = input `elem` xs
-  in fst . head $ dropWhile (notElem input . snd) withSteps
-
-replaceN n rplList start = iterate (concatMap (replace rplList . split)) start !! n
+  rose = reductions replacements' input
+  err = error "No solution???"
+  in fromMaybe err (roseDepth rose)
 
 replace :: M.HashMap String [String] -> [String] -> [String]
 replace _ [] = []
@@ -34,14 +37,32 @@ split s = dropWhile (=="") . reverse $ go s [] [[]]
                             then go cs [c] (reverse sub:acc)
                             else go cs (c:sub) acc
 
-combine :: [[String]] -> [String]
-combine ([]) = error "empty list on combine???"
-combine ([x]) = x
-combine (x:xs) = let
-  combined = combine xs
-  in concatMap (\el -> map (\c -> el ++ c) combined) x
-
 mapReplacements = M.fromListWith (++) replacements
+
+findFarthestReplacements :: [(String, String)] -> String -> [((String, String), Int)]
+findFarthestReplacements rplList input = let
+  pair rpl = (rpl, match (build $ snd rpl) input)
+  pairs = map pair rplList
+  purged = foldl (\acc (p, l) -> if null l then acc else (p,maximum l):acc) [] pairs
+  maxIdx = maximum $ map snd purged
+  candidates = filter ((==) maxIdx . snd) purged
+  in if null purged then [] else candidates
+
+replaceOne :: String -> ((String, String), Int) -> String
+replaceOne s ((out, origin), idx) = take idx s ++ out ++ drop (idx + length origin) s
+
+reduce :: [(String, String)] -> String -> [String]
+reduce rplList input = map (replaceOne input) (findFarthestReplacements rplList input)
+
+reductions :: [(String, String)] -> String -> Rose String
+reductions rplList s = Rose s (map (reductions rplList) (reduce rplList s))
+
+roseDepth :: Rose String -> Maybe Int
+roseDepth (Rose s []) = if s == "e" then Just 1 else Nothing
+roseDepth (Rose s xs) = liftM (+1) (minimumMay . catMaybes $ map roseDepth xs)
+
+minimumMay [] = Nothing
+minimumMay xs = Just $ minimum xs
 
 replacements = [
   ("Al", ["ThF"]),
@@ -88,6 +109,8 @@ replacements = [
   ("e", ["NAl"]),
   ("e", ["OMg"])
   ]
+
+replacements' = map (second head) replacements
 
 input = "CRnSiRnCaPTiMgYCaPTiRnFArSiThFArCaSiThSiThPBCaCaSiRnSiRnTiTiMgArPBCaPMgYPTiRnFArFArCaSiRnBPMgArPRnCaPTiRnFArCaSiThCaCaFArPBCaCaPTiTiRnFArCaSiRnSiAlYSiThRnFArArCaSiRnBFArCaCaSiRnSiThCaCaCaFYCaPTiBCaSiThCaSiThPMgArSiRnCaPBFYCaCaFArCaCaCaCaSiThCaSiRnPRnFArPBSiThPRnFArSiRnMgArCaFYFArCaSiRnSiAlArTiTiTiTiTiTiTiRnPMgArPTiTiTiBSiRnSiAlArTiTiRnPMgArCaFYBPBPTiRnSiRnMgArSiThCaFArCaSiThFArPRnFArCaSiRnTiBSiThSiRnSiAlYCaFArPRnFArSiThCaFArCaCaSiThCaCaCaSiRnPRnCaFArFYPMgArCaPBCaPBSiRnFYPBCaFArCaSiAl"
 
