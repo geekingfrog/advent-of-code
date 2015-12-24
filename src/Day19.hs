@@ -58,7 +58,7 @@ reductions :: [(String, String)] -> String -> Rose String
 reductions rplList s = Rose s (map (reductions rplList) (reduce rplList s))
 
 roseDepth :: Rose String -> Maybe Int
-roseDepth (Rose s []) = if s == "e" then Just 1 else Nothing
+roseDepth (Rose s []) = if s == "e" then Just 0 else Nothing
 roseDepth (Rose s xs) = liftM (+1) (minimumMay . catMaybes $ map roseDepth xs)
 
 minimumMay [] = Nothing
@@ -126,3 +126,5 @@ testReplacements' = M.fromList [
   ("H", ["HO", "OH"]),
   ("O", ["HH"])
   ]
+
+-- 201 too high
