@@ -26,6 +26,7 @@ import qualified Day21 as D21
 import qualified Day22 as D22
 import qualified Day23 as D23
 import qualified Day24 as D24
+import qualified Day25 as D25
 
 main :: IO ()
 main = do
@@ -79,4 +80,5 @@ main = do
     232 -> D23.answer2 >>= print
     241 -> print D24.answer1
     242 -> print D24.answer2
-    _ -> print "not done yet"
+    251 -> print D25.answer1
+    _ -> print "Invalid puzzle number"
