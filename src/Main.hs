@@ -1,7 +1,6 @@
 module Main where
 
 import System.Environment (getArgs)
-import Control.Monad (liftM)
 import qualified Day01 as D01
 import qualified Day02 as D02
 import qualified Day03 as D03
@@ -30,7 +29,7 @@ import qualified Day25 as D25
 
 main :: IO ()
 main = do
-  (day : pbNumber : rest) <- liftM (map read) getArgs :: IO [Int]
+  (day : pbNumber : rest) <- fmap (map read) getArgs :: IO [Int]
   case day * 10 + pbNumber of
     11 -> D01.answer1 >>= print
     12 -> D01.answer2 >>= print
