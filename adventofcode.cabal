@@ -29,6 +29,8 @@ executable adventofcode
                      , text
                      , KMP
                      , primes
+                     , containers
+                     , cryptonite
   ghc-options: -O2
   other-modules: Y2015.Day01
                , Y2015.Day02
