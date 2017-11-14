@@ -2,7 +2,7 @@ module Day09 (answer1, answer2) where
 
 import Control.Exception (throw)
 import Text.Megaparsec
-import Text.Megaparsec.Char
+import Text.Megaparsec.String
 import Debug.Trace
 import Data.List (find, nub)
 
@@ -22,14 +22,14 @@ answer2 = do
 
 getData :: IO [Vertex]
 getData = do
-  parsed <- parseFromFile verticesParser "./data/09.txt"
-  case parsed of
+  content <- readFile "./data/09.txt"
+  case parse verticesParser "" content of
     Left err -> throw err
     Right vertices -> return $ mirror vertices
   where mirror [] = []
         mirror (v@(start, end, d):vs) = v : (end, start, d) : mirror vs
 
-verticesParser :: Parsec String [Vertex]
+verticesParser :: Parser [Vertex]
 verticesParser = sepEndBy vertexParser newline
 
 vertexParser = do

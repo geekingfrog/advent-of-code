@@ -7,9 +7,8 @@ import Data.Bits ((.&.), (.|.), complement, shiftL, shiftR)
 import Control.Monad (liftM)
 import Control.Monad.State
 
-import Text.Megaparsec hiding (State)
-import Text.Megaparsec.Char
-import Text.Megaparsec.Combinator
+import Text.Megaparsec hiding (State, Label)
+import Text.Megaparsec.String
 import Control.Exception (throw)
 
 answer1 :: IO Int
@@ -73,12 +72,12 @@ eval (RShift a s) = eval a >>= \res -> return $ shiftR res s
 
 getInstructions :: IO [Instruction]
 getInstructions = do
-  parsed <- parseFromFile instructionsParser "./data/07.txt"
-  case parsed of
+  content <- readFile "./data/07.txt"
+  case parse instructionsParser "" content of
     Left err -> throw err
     Right instructions -> return instructions
 
-instructionsParser :: Parsec String [Instruction]
+instructionsParser :: Parser [Instruction]
 instructionsParser = sepEndBy instructionLine newline
 
 instructionLine = try initLine

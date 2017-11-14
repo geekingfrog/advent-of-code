@@ -2,9 +2,8 @@ module Day06 (answer1, answer2) where
 
 import Prelude hiding (replicate)
 import Control.Monad (liftM)
-import Text.Megaparsec
-import Text.Megaparsec.Char
-import Text.Megaparsec.Combinator
+import Text.Megaparsec hiding (Pos)
+import Text.Megaparsec.String
 import Control.Exception (throw, SomeException)
 import Data.Vector (Vector, replicate, (//), (!))
 import Data.List (foldl')
@@ -104,12 +103,12 @@ totalBrightness = foldl' (+) 0
 
 getInstructions :: IO [Instruction]
 getInstructions = do
-  parsed <- parseFromFile instructionsParser "./data/06.txt"
-  case parsed of
+  content <- readFile "./data/06.txt"
+  case parse instructionsParser "" content of
     Left err -> throw err
     Right instructions -> return instructions
 
-instructionsParser :: Parsec String [Instruction]
+instructionsParser :: Parser [Instruction]
 instructionsParser = sepEndBy instructionLine newline
 
 -- assume start < end

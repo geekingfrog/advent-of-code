@@ -1,7 +1,7 @@
 module Day13 (answer1, answer2) where
 
 import Text.Megaparsec
-import Text.Megaparsec.Char
+import Text.Megaparsec.String
 import Control.Exception (throw)
 
 import Data.Maybe (fromMaybe)
@@ -51,12 +51,12 @@ adjustCost vs (p1, p2, c) = let
 
 getData :: IO [Vertex]
 getData = do
-  raw <- parseFromFile relationsParser "./data/13.txt"
-  case raw of
+  content <- readFile "./data/13.txt"
+  case parse relationsParser "" content of
     Left err -> throw err
     Right dat -> return dat
 
-relationsParser :: Parsec String [Vertex]
+relationsParser :: Parser [Vertex]
 relationsParser = sepEndBy relationParser newline
 
 relationParser = do

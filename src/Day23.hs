@@ -2,7 +2,7 @@ module Day23 (answer1, answer2) where
 
 import Control.Exception (throw)
 import Text.Megaparsec
-import Text.Megaparsec.Char
+import Text.Megaparsec.String
 import qualified Data.Vector as V
 import Data.List (unfoldr)
 import Control.Monad (liftM)
@@ -55,8 +55,8 @@ second (_, a, _) = a
 
 getData :: IO (V.Vector Instruction)
 getData = do
-  parsed <- parseFromFile instructionsParser "./data/23.txt"
-  case parsed of
+  content <- readFile "./data/23.txt"
+  case parse instructionsParser "" content of
     Left err -> throw err
     Right is -> return is
 
@@ -71,7 +71,7 @@ instructionParser = try (Half <$> (string "hlf " >> registerParser))
 
 registerParser = (char 'a' >> return A) <|> (char 'b' >> return B)
 
-offsetParser :: Parsec String Int
+offsetParser :: Parser Int
 offsetParser = read <$> (char '+' >> some digitChar)
            <|> ((*(-1)) . read) <$> (char '-' >> some digitChar)
 

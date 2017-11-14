@@ -1,7 +1,7 @@
 module Day16 (answer1, answer2) where
 
 import Text.Megaparsec
-import Text.Megaparsec.Char
+import Text.Megaparsec.String
 import Control.Exception
 import Data.Function (on)
 import Control.Monad (liftM)
@@ -51,12 +51,12 @@ checkAttr comparator ((x, y):rest) attr@(target, val) =
 
 getData :: IO [(Name, [Attr])]
 getData = do
-  parsed <- parseFromFile auntsParser "./data/16.txt"
-  case parsed of
+  content <- readFile"./data/16.txt"
+  case parse auntsParser "" content of
     Left err -> throw err
     Right as -> return as
 
-auntsParser :: Parsec String [(Name, [Attr])]
+auntsParser :: Parser [(Name, [Attr])]
 auntsParser = sepEndBy auntParser newline
 
 auntParser = (,) <$> (string "Sue " *> (read <$> some digitChar) <* string ": ") <*> attrs

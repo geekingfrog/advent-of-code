@@ -2,8 +2,7 @@ module Day08 (answer1, answer2) where
 
 import Control.Monad (liftM)
 import Text.Megaparsec
-import Text.Megaparsec.Char
-import Text.Megaparsec.Combinator
+import Text.Megaparsec.String
 import Data.Char (chr, digitToInt)
 import Control.Exception (throw)
 
@@ -32,6 +31,7 @@ maybeEscapedChar = try hexChar
                <|> try (string "\\\"" >> return '"')
                <|> letterChar
 
+hexChar :: Parser Char
 hexChar = do
   char '\\'
   char 'x'
