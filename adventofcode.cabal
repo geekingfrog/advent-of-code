@@ -30,30 +30,30 @@ executable adventofcode
                      , KMP
                      , primes
   ghc-options: -O2
-  other-modules: Day01
-               , Day02
-               , Day03
-               , Day04
-               , Day05
-               , Day06
-               , Day07
-               , Day08
-               , Day09
-               , Day10
-               , Day11
-               , Day12
-               , Day13
-               , Day14
-               , Day15
-               , Day16
-               , Day17
-               , Day18
-               , Day19
-               , Day20
-               , Day21
-               , Day22
-               , Day23
-               , Day24
-               , Day25
+  other-modules: Y2016.Day01
+               , Y2016.Day02
+               , Y2016.Day03
+               , Y2016.Day04
+               , Y2016.Day05
+               , Y2016.Day06
+               , Y2016.Day07
+               , Y2016.Day08
+               , Y2016.Day09
+               , Y2016.Day10
+               , Y2016.Day11
+               , Y2016.Day12
+               , Y2016.Day13
+               , Y2016.Day14
+               , Y2016.Day15
+               , Y2016.Day16
+               , Y2016.Day17
+               , Y2016.Day18
+               , Y2016.Day19
+               , Y2016.Day20
+               , Y2016.Day21
+               , Y2016.Day22
+               , Y2016.Day23
+               , Y2016.Day24
+               , Y2016.Day25
                , Tsp
 

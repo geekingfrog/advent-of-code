@@ -1,4 +1,4 @@
-module Day14 (answer1, answer2) where
+module Y2016.Day14 (answer1, answer2) where
 
 import Data.List (sort, group, maximumBy)
 import Data.Ord (comparing)

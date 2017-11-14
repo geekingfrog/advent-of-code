@@ -1,4 +1,4 @@
-module Day08 (answer1, answer2) where
+module Y2016.Day08 (answer1, answer2) where
 
 import Control.Monad (liftM)
 import Text.Megaparsec

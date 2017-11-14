@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Day04 (answer1, answer2) where
+module Y2016.Day04 (answer1, answer2) where
 
 import Data.Digest.Pure.MD5
 import Data.ByteString.Builder

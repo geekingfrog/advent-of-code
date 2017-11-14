@@ -1,4 +1,4 @@
-module Day18 (answer1, answer2) where
+module Y2016.Day18 (answer1, answer2) where
 
 import qualified Data.Vector as V
 import Control.Monad (liftM)

@@ -1,4 +1,4 @@
-module Day22 (answer1, answer2) where
+module Y2016.Day22 (answer1, answer2) where
 
 import Control.Monad.State
 import Data.Maybe (catMaybes, mapMaybe, fromMaybe)

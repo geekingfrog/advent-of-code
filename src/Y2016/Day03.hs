@@ -1,4 +1,4 @@
-module Day03 (answer1, answer2) where
+module Y2016.Day03 (answer1, answer2) where
 
 import Control.Monad (liftM)
 import Data.List (scanl, nub)

@@ -1,4 +1,4 @@
-module Day06 (answer1, answer2) where
+module Y2016.Day06 (answer1, answer2) where
 
 import Prelude hiding (replicate)
 import Control.Monad (liftM)

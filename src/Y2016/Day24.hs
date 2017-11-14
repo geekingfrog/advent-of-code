@@ -1,4 +1,4 @@
-module Day24 (answer1, answer2) where
+module Y2016.Day24 (answer1, answer2) where
 
 import Data.List (nub, sortBy, minimumBy)
 import Data.Ord (comparing)

@@ -1,4 +1,4 @@
-module Day17 (answer1, answer2) where
+module Y2016.Day17 (answer1, answer2) where
 
 answer1 :: Int
 answer1 = length $ arrangements target containers

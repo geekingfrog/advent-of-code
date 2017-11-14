@@ -1,4 +1,4 @@
-module Day11 (answer1, answer2) where
+module Y2016.Day11 (answer1, answer2) where
 
 import Data.List (groupBy, nubBy)
 

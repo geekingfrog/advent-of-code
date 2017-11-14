@@ -1,4 +1,4 @@
-module Day20 (answer1, answer2) where
+module Y2016.Day20 (answer1, answer2) where
 
 import Data.List (nub, sort)
 import Data.Numbers.Primes

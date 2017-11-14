@@ -1,4 +1,4 @@
-module Day07 (answer1, answer2) where
+module Y2016.Day07 (answer1, answer2) where
 
 import Data.Word (Word16)
 import qualified Data.HashMap.Strict as M

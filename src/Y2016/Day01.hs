@@ -1,4 +1,4 @@
-module Day01 (answer1, answer2) where
+module Y2016.Day01 (answer1, answer2) where
 
 import Data.List (foldl', scanl)
 

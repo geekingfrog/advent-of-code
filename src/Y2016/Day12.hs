@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Day12 (answer1, answer2) where
+module Y2016.Day12 (answer1, answer2) where
 
 import Prelude hiding (readFile)
 import Data.ByteString.Lazy (readFile)
