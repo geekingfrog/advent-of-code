@@ -1,4 +1,4 @@
-module Y2016.Day19 (answer1, answer2) where
+module Y2015.Day19 (answer1, answer2) where
 
 import Data.Char (isUpper)
 import qualified Data.HashMap.Strict as M

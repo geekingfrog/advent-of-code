@@ -1,4 +1,4 @@
-module Y2016.Day16 (answer1, answer2) where
+module Y2015.Day16 (answer1, answer2) where
 
 import Text.Megaparsec
 import Text.Megaparsec.String

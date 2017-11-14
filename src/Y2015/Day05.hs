@@ -1,4 +1,4 @@
-module Y2016.Day05 (answer1, answer2) where
+module Y2015.Day05 (answer1, answer2) where
 
 import Control.Monad (liftM)
 import Control.Applicative (liftA2)

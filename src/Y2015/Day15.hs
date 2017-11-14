@@ -1,4 +1,4 @@
-module Y2016.Day15 (answer1, answer2) where
+module Y2015.Day15 (answer1, answer2) where
 
 -- bruteforce solution, not totally happy about that though...
 

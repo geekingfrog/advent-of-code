@@ -5,31 +5,31 @@ import System.Exit (die)
 import Control.Monad
 import Data.Monoid
 
-import qualified Y2016.Day01 as D01
-import qualified Y2016.Day02 as D02
-import qualified Y2016.Day03 as D03
-import qualified Y2016.Day04 as D04
-import qualified Y2016.Day05 as D05
-import qualified Y2016.Day06 as D06
-import qualified Y2016.Day07 as D07
-import qualified Y2016.Day08 as D08
-import qualified Y2016.Day09 as D09
-import qualified Y2016.Day10 as D10
-import qualified Y2016.Day11 as D11
-import qualified Y2016.Day12 as D12
-import qualified Y2016.Day13 as D13
-import qualified Y2016.Day14 as D14
-import qualified Y2016.Day15 as D15
-import qualified Y2016.Day16 as D16
-import qualified Y2016.Day17 as D17
-import qualified Y2016.Day18 as D18
-import qualified Y2016.Day19 as D19
-import qualified Y2016.Day20 as D20
-import qualified Y2016.Day21 as D21
-import qualified Y2016.Day22 as D22
-import qualified Y2016.Day23 as D23
-import qualified Y2016.Day24 as D24
-import qualified Y2016.Day25 as D25
+import qualified Y2015.Day01 as D01
+import qualified Y2015.Day02 as D02
+import qualified Y2015.Day03 as D03
+import qualified Y2015.Day04 as D04
+import qualified Y2015.Day05 as D05
+import qualified Y2015.Day06 as D06
+import qualified Y2015.Day07 as D07
+import qualified Y2015.Day08 as D08
+import qualified Y2015.Day09 as D09
+import qualified Y2015.Day10 as D10
+import qualified Y2015.Day11 as D11
+import qualified Y2015.Day12 as D12
+import qualified Y2015.Day13 as D13
+import qualified Y2015.Day14 as D14
+import qualified Y2015.Day15 as D15
+import qualified Y2015.Day16 as D16
+import qualified Y2015.Day17 as D17
+import qualified Y2015.Day18 as D18
+import qualified Y2015.Day19 as D19
+import qualified Y2015.Day20 as D20
+import qualified Y2015.Day21 as D21
+import qualified Y2015.Day22 as D22
+import qualified Y2015.Day23 as D23
+import qualified Y2015.Day24 as D24
+import qualified Y2015.Day25 as D25
 
 main :: IO ()
 main = do
@@ -41,16 +41,16 @@ main = do
             <> progName
             <> " Y day problemNumber. Ex: "
             <> progName
-            <> " 2016 7 1"
+            <> " 2015 7 1"
             )
     let (year:day:pbNumber:rest) = map read args :: [Int]
     case year of
-        2016 -> run2016 day pbNumber
+        2015 -> run2015 day pbNumber
         _    -> die $ "year unknown: " <> show year
 
 
-run2016 :: Int -> Int -> IO ()
-run2016 day pbNumber = case day * 10 + pbNumber of
+run2015 :: Int -> Int -> IO ()
+run2015 day pbNumber = case day * 10 + pbNumber of
     11  -> D01.answer1 >>= print
     12  -> D01.answer2 >>= print
     21  -> D02.answer1 >>= print

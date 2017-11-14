@@ -1,4 +1,4 @@
-module Y2016.Day09 (answer1, answer2) where
+module Y2015.Day09 (answer1, answer2) where
 
 import Control.Exception (throw)
 import Text.Megaparsec

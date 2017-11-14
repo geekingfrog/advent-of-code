@@ -1,4 +1,4 @@
-module Y2016.Day25 (answer1) where
+module Y2015.Day25 (answer1) where
 
 answer1 :: Int
 answer1 = code 3010 3019
