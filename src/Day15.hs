@@ -28,41 +28,43 @@ sprinkles = Ingredient "Sprinkles" (-3) 3 0 0 9
 candy = Ingredient "Candy" (-1) 0 4 0 1
 chocolate = Ingredient "Chocolate" 0 0 (-2) 2 8
 
-allMixes n = [ mix |
-    a <- [0..n],
-    b <- [0..n-a],
-    b >= 0,
-    c <- [0..n-a-b],
-    c >= 0,
-    let d = n - a - b - c,
-    d >= 0,
-    let mix = [(a, sugar), (b, sprinkles), (c, candy), (d, chocolate)]
-  ]
+allMixes n =
+    [ mix
+    | a <- [0 .. n]
+    , b <- [0 .. n - a]
+    , b >= 0
+    , c <- [0 .. n - a - b]
+    , c >= 0
+    , let d = n - a - b - c
+    , d >= 0
+    , let mix = [(a, sugar), (b, sprinkles), (c, candy), (d, chocolate)]
+    ]
 
-allMixesWithCalories n cal = [ mix |
-      a <- [0..n],
-      b <- [0..n-a],
-      b >= 0,
-      c <- [0..n-a-b],
-      c >= 0,
-      let d = n - a - b - c,
-      d >= 0,
-      let mix = [(a, sugar), (b, sprinkles), (c, candy), (d, chocolate)],
-      calories mix == cal
-  ]
+allMixesWithCalories n cal =
+    [ mix
+    | a <- [0 .. n]
+    , b <- [0 .. n - a]
+    , b >= 0
+    , c <- [0 .. n - a - b]
+    , c >= 0
+    , let d = n - a - b - c
+    , d >= 0
+    , let mix = [(a, sugar), (b, sprinkles), (c, candy), (d, chocolate)]
+    , calories mix == cal
+    ]
 
 mixCost :: [(Int, Ingredient)] -> Int
 mixCost = prod . foldl' addIngredient initialState
   where
     initialState = (0, 0, 0, 0)
-    addIngredient (capa, dura, flav, text) (n, i) = (
-      capa + n*capacity i,
-      dura + n*durability i,
-      flav + n*flavor i,
-      text + n*texture i
-      )
+    addIngredient (capa, dura, flav, text) (n, i) =
+        ( capa + n * capacity i
+        , dura + n * durability i
+        , flav + n * flavor i
+        , text + n * texture i
+        )
     sign a b c d = if any (<0) [a, b, c, d] then 0 else 1
-    prod (a, b, c, d) = a*b*c*d*sign a b c d
+    prod (a, b, c, d) = a * b * c * d * sign a b c d
 
 
 calories :: [(Int, Ingredient)] -> Int

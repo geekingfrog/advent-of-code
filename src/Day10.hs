@@ -15,7 +15,8 @@ groupList xs = map (\l -> (length l, head l)) (group xs)
 
 expandList :: [(Int, Int)] -> [Int]
 expandList xs = reverse $ go xs []
-  where go [] acc = acc
-        go ((a,b):xs) acc = go xs (b : a : acc)
+  where
+    go []          acc = acc
+    go ((a, b):xs) acc = go xs (b : a : acc)
 
-input = [3,1,1,3,3,2,2,1,1,3]
+input = [3, 1, 1, 3, 3, 2, 2, 1, 1, 3]

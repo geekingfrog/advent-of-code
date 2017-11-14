@@ -18,20 +18,21 @@ answer2 = liftM (sumNumbers . removeRed) getData
 
 sumNumbers :: Value -> Int
 sumNumbers (Object o) = M.foldl' (\acc v -> acc + sumNumbers v) 0 o
-sumNumbers (Array a) = V.foldl' (\acc v -> acc + sumNumbers v) 0 a
+sumNumbers (Array  a) = V.foldl' (\acc v -> acc + sumNumbers v) 0 a
 sumNumbers (Number n) = fromMaybe 0 (toBoundedInteger n)
-sumNumbers _ = 0
+sumNumbers _          = 0
 
 getData :: IO Value
 getData = do
-  raw <- readFile "./data/12.json"
-  case eitherDecode' raw of
-    Left err -> error err
-    Right val -> return val
+    raw <- readFile "./data/12.json"
+    case eitherDecode' raw of
+        Left  err -> error err
+        Right val -> return val
 
 removeRed :: Value -> Value
-removeRed (Object o) = if hasRed o then Object M.empty else Object (M.map removeRed o)
+removeRed (Object o) =
+    if hasRed o then Object M.empty else Object (M.map removeRed o)
 removeRed (Array a) = Array (fmap removeRed a)
-removeRed val = val
+removeRed val       = val
 
 hasRed o = elem (String "red") $ M.elems o

@@ -10,32 +10,33 @@ import Tsp
 
 answer1 :: IO Int
 answer1 = do
-  vertices <- getData
-  return $ fst $ minCycle vertices
+    vertices <- getData
+    return $ fst $ minCycle vertices
 
 answer2 :: IO Int
 answer2 = do
-  vertices <- getData
-  return $ fst $ maxCycle vertices
+    vertices <- getData
+    return $ fst $ maxCycle vertices
 
 -- Parsing
 
 getData :: IO [Vertex]
 getData = do
-  content <- readFile "./data/09.txt"
-  case parse verticesParser "" content of
-    Left err -> throw err
-    Right vertices -> return $ mirror vertices
-  where mirror [] = []
-        mirror (v@(start, end, d):vs) = v : (end, start, d) : mirror vs
+    content <- readFile "./data/09.txt"
+    case parse verticesParser "" content of
+        Left  err      -> throw err
+        Right vertices -> return $ mirror vertices
+  where
+    mirror []                     = []
+    mirror (v@(start, end, d):vs) = v : (end, start, d) : mirror vs
 
 verticesParser :: Parser [Vertex]
 verticesParser = sepEndBy vertexParser newline
 
 vertexParser = do
-  start <- some letterChar
-  string " to "
-  end <- some letterChar
-  string " = "
-  d <- read <$> some digitChar
-  return (start, end, d)
+    start <- some letterChar
+    string " to "
+    end <- some letterChar
+    string " = "
+    d <- read <$> some digitChar
+    return (start, end, d)
