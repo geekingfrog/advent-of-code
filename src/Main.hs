@@ -31,6 +31,8 @@ import qualified Y2015.Day23 as D23
 import qualified Y2015.Day24 as D24
 import qualified Y2015.Day25 as D25
 
+import qualified Y2016.Day11 as Y2016D11
+
 main :: IO ()
 main = do
     args <- getArgs
@@ -46,6 +48,7 @@ main = do
     let (year:day:pbNumber:rest) = map read args :: [Int]
     case year of
         2015 -> run2015 day pbNumber
+        2016 -> run2016 day pbNumber
         _    -> die $ "year unknown: " <> show year
 
 
@@ -100,4 +103,9 @@ run2015 day pbNumber = case day * 10 + pbNumber of
     241 -> print D24.answer1
     242 -> print D24.answer2
     251 -> print D25.answer1
+    _   -> print "Invalid puzzle number"
+
+run2016 :: Int -> Int -> IO ()
+run2016 day pbNumber = case day * 10 + pbNumber of
+    111 -> print Y2016D11.answer1
     _   -> print "Invalid puzzle number"

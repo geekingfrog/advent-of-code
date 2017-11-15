@@ -29,10 +29,12 @@ executable adventofcode
                      , text
                      , KMP
                      , primes
-                     , containers
+                     , containers >= 0.5.10
                      , cryptonite
-  ghc-options: -O2
-  other-modules: Y2015.Day01
+  ghc-options: -O2 -Wincomplete-patterns
+
+  other-modules: Tsp
+               , Y2015.Day01
                , Y2015.Day02
                , Y2015.Day03
                , Y2015.Day04
@@ -57,5 +59,4 @@ executable adventofcode
                , Y2015.Day23
                , Y2015.Day24
                , Y2015.Day25
-               , Tsp
-
+               , Y2016.Day11
