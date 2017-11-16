@@ -108,4 +108,5 @@ run2015 day pbNumber = case day * 10 + pbNumber of
 run2016 :: Int -> Int -> IO ()
 run2016 day pbNumber = case day * 10 + pbNumber of
     111 -> print Y2016D11.answer1
+    112 -> print Y2016D11.answer2
     _   -> print "Invalid puzzle number"

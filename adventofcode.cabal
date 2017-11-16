@@ -31,7 +31,7 @@ executable adventofcode
                      , primes
                      , containers >= 0.5.10
                      , cryptonite
-  ghc-options: -O2 -Wincomplete-patterns
+  ghc-options: -O3 -Wincomplete-patterns
 
   other-modules: Tsp
                , Y2015.Day01

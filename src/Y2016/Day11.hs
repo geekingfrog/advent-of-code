@@ -8,18 +8,20 @@ import Data.Sequence ((<|), (|>), Seq(..))
 import qualified Data.Sequence as Seq
 import Data.Monoid
 
+import GHC.Word
+import Data.Bits as Bits
+
 import Debug.Trace as Debug
 
 answer1, answer2 :: Int
-answer1 = solve initialState
+answer1 = solve initialState -- 31 in 4s
+answer2 = solve initialState2 -- 55 in 253s
 
-answer2 = 42
 
-
-solve :: Floors -> Int
+solve :: Building -> Int
 solve start = go Set.empty (Seq.singleton (0, start))
   where
-    go :: Set.Set Floors -> Seq.Seq (Int, Floors) -> Int
+    go :: Set.Set Building -> Seq.Seq (Int, Building) -> Int
     go _ Seq.Empty = error "no solution?"
     go visited ((n, s):<|rest)
         | finalState s
@@ -31,93 +33,70 @@ solve start = go Set.empty (Seq.singleton (0, start))
           in  go visited' seq'
 
 
-data Element = Tm | Sr | Pu | Ru | Pm
-    deriving (Eq, Show, Ord)
--- Thulium, Strontium, Plutonium, Ruthenium, Promethium
-
-data Tech = Gen Element | Chip Element deriving (Show, Eq, Ord)
 
 
-type Floor = [Tech]
-type Floors = (Int, V.Vector Floor)
-            -- ^- elevator position
-            --       ^- list of floors
+type Floor = (Word8, Word8) -- chips, generators
+type Building = (Int, V.Vector Floor) -- (elevator position, floors)
 
-
-initialState :: Floors
-initialState =
-    let f0 = [Gen Tm, Chip Tm, Gen Pu, Gen Sr]
-        f1 = [Chip Pu, Chip Sr]
-        f2 = [Gen Pm, Chip Pm, Gen Ru, Chip Ru]
-        f3 = []
-    in  (0, V.fromList [f0, f1, f2, f3])
-
-testState :: Floors
-testState =
-    let f0 = [Chip Tm, Chip Sr]
-        f1 = [Gen Tm]
-        f2 = [Gen Sr]
-        f3 = []
-    in  (0, V.fromList [f0, f1, f2, f3])
+-- elements: Tm, Sr, Pu, Ru, Pm, El, Di
+--           1 , 2 , 4 , 8 , 16, 32, 64
 
 safeFloor :: Floor -> Bool
-safeFloor f = all (safeTech f) f
-  where
-    safeTech []    _         = True
-    safeTech _     (Gen  _ ) = True
-    safeTech techs (Chip el) = Gen el `elem` techs || not (hasGen techs)
-    hasGen []         = False
-    hasGen (Gen _:_ ) = True
-    hasGen (_    :ts) = hasGen ts
+safeFloor (chips, gens) = chips == 0 || gens == 0 || (chips .&. gens) == chips
 
-safeState :: Floors -> Bool
-safeState (_, floors) = all safeFloor floors
-
-finalState :: Floors -> Bool
-finalState (n, floors) =
-    let lastFloor       = V.last floors
-        otherFloors     = V.init floors
-    in  n == 3 && all null (V.init floors)
-
-
-nextStates :: Floors -> [Floors]
+nextStates :: Building -> [Building]
 nextStates (n, floors) = do
     n' <- [n + 1, n - 1]
-    guard $ n' >= 0
-    guard $ n' <= 3
-    let currentFloor = floors V.! n
-    let nextFloor    = floors V.! n'
-    itemTaken <- subSeqs currentFloor
-    let remaining      = filter (`notElem`itemTaken) currentFloor
-    let withAddedItems = nextFloor ++ itemTaken
-    let floors'        = floors V.// [(n, remaining), (n', withAddedItems)]
-    let nextState      = (n', floors')
-    guard $ safeFloor remaining
-    guard $ safeFloor withAddedItems
-    pure nextState
+    guard $ n' >= 0 && n' < 4
+    let currentFloor@(currentChips, currentGens) = floors V.! n
+    let (nextChips, nextGens) = floors V.! n'
+    (cs, gs) <- possibleItemsToTake currentFloor
+    let currentFloor' = (currentChips `xor` cs, currentGens `xor` gs)
+    let nextFloor' = (nextChips .|. cs, nextGens .|. gs)
+    guard $ safeFloor currentFloor' && safeFloor nextFloor'
+    let updated = floors V.// [(n, currentFloor'), (n', nextFloor')]
+    pure (n', updated)
 
 
-subSeqs :: (Ord a, Eq a) => [a] -> [[a]]
-subSeqs l = [[x] | x <- l] ++ [[x, y] | x <- l, y <- l, x < y]
+elements :: [Word8]
+elements = [shiftL 1 n | n <- [0..6]]
 
+possibleItemsToTake :: Floor -> [Floor]
+possibleItemsToTake (chips, gens) =
+    let cs = [c | c <- elements, (chips .&. c) /= 0]
+        gs = [g | g <- elements, (gens .&. g) /= 0]
+        singleChip = [(c, 0) | c <- cs]
+        singleGen = [(0, g) | g <- gs]
+        dblChip = [(c1 + c2, 0) | c1 <- cs, c2 <- cs, c2 > c1]
+        dblGen = [(0, g1 + g2) | g1 <- gs, g2 <- gs, g2 > g1]
+        mixed = [(c, g) | c <- cs, g <- gs]
+     in singleChip ++ singleGen ++ dblChip ++ dblGen ++ mixed
 
-pretty :: Floors -> String
-pretty (n, floors) =
-    let
-        prefix i = "F" ++ show i ++ " " ++ if i == (n+1) then " E " else " . "
-        fs = map (\(i, f) -> prefix i ++ " " ++ prettyFloor f) (zip [1..] $ V.toList floors)
-    in
-        unlines $ reverse fs
+finalState :: Building -> Bool
+finalState (n, floors) = n == 3 && all (== (0,0)) (V.init floors)
 
-prettyFloor :: Floor -> String
-prettyFloor techs =
-    let
-      order = [c e | e <- [Tm, Sr, Pu, Ru, Pm], c <- [Gen, Chip]]
-      prettyShow (Gen x) = show x ++ "G"
-      prettyShow (Chip x) = show x ++ "M"
-      strs = [if x `elem` techs then prettyShow x else " . " | x <- order]
-    in
-      unwords strs
+initialState, initialState2, testState :: Building
+initialState =
+    let f0 = (1, 1 + 2 + 4)
+        f1 = (2 + 4, 0)
+        f2 = (8 + 16, 8 + 16)
+        f3 = (0, 0)
+    in  (0, V.fromList [f0, f1, f2, f3])
+
+initialState2 =
+    let f0 = (1 + 32 + 64, 1 + 2 + 4 + 32 + 64)
+        f1 = (2 + 4, 0)
+        f2 = (8 + 16, 8 + 16)
+        f3 = (0, 0)
+    in  (0, V.fromList [f0, f1, f2, f3])
+
+testState =
+    let f0 = (1 + 2, 0)
+        f1 = (0, 1)
+        f2 = (0, 2)
+        f3 = (0, 0)
+    in  (0, V.fromList [f0, f1, f2, f3])
+
 
 -- raw puzzle input below
 -- The first floor contains a thulium generator, a thulium-compatible microchip, a plutonium generator, and a strontium generator.
