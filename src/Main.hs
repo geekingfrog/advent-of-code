@@ -35,6 +35,8 @@ import qualified Y2016.Day11 as Y2016D11
 import qualified Y2016.Day15 as Y2016D15
 import qualified Y2016.Day19 as Y2016D19
 
+import qualified Y2017.Day01 as Y2017D01
+
 main :: IO ()
 main = do
     args <- getArgs
@@ -114,4 +116,10 @@ run2016 day pbNumber = case day * 10 + pbNumber of
     151 -> print Y2016D15.answer1
     152 -> print Y2016D15.answer2
     192 -> print Y2016D19.answer2
+    _   -> print "Invalid puzzle number"
+
+run2017 :: Int -> Int -> IO ()
+run2017 day pbNumber = case day * 10 + pbNumber of
+    11 -> print Y2017D01.answer1
+    12 -> print Y2017D01.answer2
     _   -> print "Invalid puzzle number"
