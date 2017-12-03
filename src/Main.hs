@@ -37,6 +37,7 @@ import qualified Y2016.Day19 as Y2016D19
 
 import qualified Y2017.Day01 as Y2017D01
 import qualified Y2017.Day02 as Y2017D02
+import qualified Y2017.Day03 as Y2017D03
 
 main :: IO ()
 main = do
@@ -54,6 +55,7 @@ main = do
     case year of
         2015 -> run2015 day pbNumber
         2016 -> run2016 day pbNumber
+        2017 -> run2017 day pbNumber
         _    -> die $ "year unknown: " <> show year
 
 
@@ -125,4 +127,6 @@ run2017 day pbNumber = case day * 10 + pbNumber of
     12 -> print Y2017D01.answer2
     21 -> print Y2017D02.answer1
     22 -> print Y2017D02.answer2
+    31 -> print Y2017D03.answer1
+    32 -> print Y2017D03.answer2
     _   -> print "Invalid puzzle number"

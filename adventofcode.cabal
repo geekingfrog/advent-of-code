@@ -32,6 +32,8 @@ executable adventofcode
                      , containers >= 0.5.10
                      , cryptonite
                      , foldl
+                     , monad-loops
+
   ghc-options: -O3 -Wincomplete-patterns
 
   other-modules: Tsp
