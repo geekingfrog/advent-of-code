@@ -31,6 +31,7 @@ executable adventofcode
                      , primes
                      , containers >= 0.5.10
                      , cryptonite
+                     , foldl
   ghc-options: -O3 -Wincomplete-patterns
 
   other-modules: Tsp
@@ -60,3 +61,6 @@ executable adventofcode
                , Y2015.Day24
                , Y2015.Day25
                , Y2016.Day11
+               , Y2016.Day15
+               , Y2016.Day19
+               , Y2017.Day01
