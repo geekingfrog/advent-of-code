@@ -130,6 +130,6 @@ run2017 day pbNumber = case day * 10 + pbNumber of
     22 -> print Y2017D02.answer2
     31 -> print Y2017D03.answer1
     32 -> print Y2017D03.answer2
-    41 -> Y2017D03.answer1 >>= print
-    42 -> Y2017D03.answer2 >>= print
+    41 -> Y2017D04.answer1 >>= print
+    42 -> Y2017D04.answer2 >>= print
     _   -> print "Invalid puzzle number"
