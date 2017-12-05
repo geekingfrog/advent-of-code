@@ -33,6 +33,7 @@ executable adventofcode
                      , cryptonite
                      , foldl
                      , monad-loops
+                     , primitive
 
   ghc-options: -O3 -Wincomplete-patterns
 
