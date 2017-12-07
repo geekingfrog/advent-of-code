@@ -1,18 +1,68 @@
+{-# LANGUAGE DeriveFunctor #-}
+
 module Y2017.Day07 (answer1, answer2) where
 
 import Text.Megaparsec
 import Text.Megaparsec.Text
 
-import Data.Text
-import Data.Text.IO as T
+import Data.Ord
+import Data.List as L
+import Data.Maybe
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
+import Data.Foldable
+import qualified Data.Set as Set
+import qualified Data.HashMap.Strict as Map
 
-data Prog = Prog Text Int deriving Show
-data Tree = Leaf Prog | Node Prog [Tree] deriving Show
+data Prog = Prog !Text !Int deriving Show
+data Tree a = Node a [Tree a] deriving (Show, Functor)
 
 
-answer1, answer2 :: IO Text
-answer1 = error "wip 1"
-answer2 = error "wip 2"
+answer1 :: IO Text
+answer1 = do
+    list <- parseInput
+    pure $ findRoot list
+
+answer2 :: IO Int
+answer2 = do
+    list <- parseInput
+    let t = buildTree (findRoot list) list
+    pure $ balance t 0
+
+
+findRoot :: [(Prog, [Text])] -> Text
+findRoot list =
+    let allNames = [n | (Prog n _, _) <- list]
+        allChildren = concatMap snd list
+        root = Set.difference (Set.fromList allNames) (Set.fromList allChildren)
+    in case Set.toList root of
+         [x] -> x
+         _ -> error "invalid input"
+
+buildTree :: Text -> [(Prog, [Text])] -> Tree Prog
+buildTree rootName rawNodes =
+    let mappings = Map.fromList $ map (\p@(Prog n _, _) -> (n, p)) rawNodes
+        buildTree' m root =
+            let (n, cs) = fromMaybe (error "cannot find node") (Map.lookup root m)
+                children = fmap (buildTree' m) cs
+             in Node n children
+      in buildTree' mappings rootName
+
+weight :: Tree Prog -> Int
+weight (Node (Prog _ n) cs) = n + sum (fmap weight cs)
+
+balance :: Tree Prog -> Int -> Int
+balance (Node (Prog _ n) []) delta = n + delta
+balance (Node (Prog _ n) cs) delta =
+    let branches = fmap (\c -> (weight c, c)) cs
+        okBranches = maximumBy (comparing length) $ L.groupBy (\a b -> fst a == fst b) branches
+        okWeight = fst $ head okBranches
+        unbalancedBranch = find ((/= okWeight) . fst) branches
+     in case unbalancedBranch of
+          Nothing -> n + delta -- children balanced, so need to adjust that node
+          Just b -> balance (snd b) (okWeight - fst b)
+
 
 
 parseInput :: IO [(Prog, [Text])]
@@ -39,4 +89,4 @@ children = try (do
     space
     sepBy progName (char ',' >> space)) <|> pure []
 
-progName = pack <$> many letterChar
+progName = T.pack <$> many letterChar
