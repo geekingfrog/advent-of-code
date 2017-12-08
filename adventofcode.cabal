@@ -73,3 +73,4 @@ executable adventofcode
                , Y2017.Day05
                , Y2017.Day06
                , Y2017.Day07
+               , Y2017.Day08
