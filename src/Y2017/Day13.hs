@@ -1,43 +1,15 @@
 module Y2017.Day13 (answer1, answer2) where
 
-import Data.List
 import Data.Foldable
 
 
 answer1, answer2 :: Int
 answer1 = foldl' (\acc (a,b) -> acc + a * b) 0 $ filter (caught 0) input
-answer2 = solve2 input
+answer2 = head [d | d <- [0..], not (any (caught d) input)]
 
 
 caught :: Int -> (Int, Int) -> Bool
-caught delay (l, d) =
-    let atZero = [i * (d-1) * 2 - l - delay | i <- [0..]]
-        h = head $ dropWhile (< 0) atZero
-     in h == 0
-
-atTop :: (Int, Int) -> [Int]
-atTop (l, d) = dropWhile (< 0) [i * (d-1) * 2 -l | i <- [0..]]
-
-
-merge :: [[Int]] -> [Int]
-merge xs = let (as, bs) = minHead xs
-               trimmed = filter (not . null) $ map tail as
-            in case (as, bs) of
-                 ([], []) -> []
-                 ([], b) -> merge b
-                 (a@(m:_), bs) -> head m : merge (trimmed ++ bs)
-
-solve2 :: [(Int, Int)] -> Int
-solve2 l =
-    let merged = merge $ map atTop l
-        zs = zip merged (tail merged)
-        fs = filter (\(a, b) -> a /= b - 1) zs
-     in 1 + fst (head fs)
-
-minHead :: [[Int]] -> ([[Int]], [[Int]])
-minHead [] = ([], [])
-minHead xs = let m = minimum (map head xs)
-              in partition (\l -> head l == m) xs
+caught delay (l, d) = ((l+delay) `mod` (2 * (d-1))) == 0
 
 
 test :: [(Int, Int)]
