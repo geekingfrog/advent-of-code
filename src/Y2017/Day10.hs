@@ -1,6 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 
-module Y2017.Day10 (answer1, answer2) where
+module Y2017.Day10 (answer1, answer2, knotHash, showHex, toBytes) where
 
 import GHC.Word
 import qualified Numeric
