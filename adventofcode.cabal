@@ -35,7 +35,7 @@ executable adventofcode
                      , monad-loops
                      , primitive
 
-  ghc-options: -O3 -Wincomplete-patterns
+  ghc-options: -O2 -Wincomplete-patterns -threaded -with-rtsopts=-N -O2
 
   other-modules: Tsp
                , Y2015.Day01
@@ -80,3 +80,4 @@ executable adventofcode
                , Y2017.Day12
                , Y2017.Day13
                , Y2017.Day14
+               , Y2017.Day15
