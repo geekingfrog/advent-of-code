@@ -17,10 +17,8 @@ answer2 =
             valsA
             valsB
 
--- not 301
-
-genA = iterate (genVal 16807) startA
-genB = iterate (genVal 48271) startB
+genA = tail $ iterate (genVal 16807) startA
+genB = tail $ iterate (genVal 48271) startB
 
 genVal f v = (v * f) `rem` 2147483647
 
