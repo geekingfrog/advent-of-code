@@ -1,4 +1,3 @@
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE BangPatterns #-}
 
 module Y2017.Day16 (answer1, answer2) where
