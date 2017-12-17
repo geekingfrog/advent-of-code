@@ -1,4 +1,4 @@
-module Y2017.Day12 (answer1, answer2, buildGraph, findGroups, Graph) where
+module Y2017.Day12 (answer1, answer2) where
 
 import Data.Maybe
 import Data.Foldable
