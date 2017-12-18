@@ -18,6 +18,9 @@ import Control.Concurrent.STM.TMChan as Chan
 import Control.Concurrent.STM
 import Control.Concurrent.STM.TVar
 import qualified Control.Exception as Exc
+import Control.Monad.IO.Class (liftIO)
+
+import Control.Monad.Reader
 
 answer1, answer2 :: IO Int
 answer1 = do
@@ -48,17 +51,40 @@ answer2 = do
     c1  <- newTVarIO 0
     let state0 = (0, V.fromList [0, 0, 0, 0, 0], Nothing)
     let state1 = (0, V.fromList [0, 0, 0, 1, 0], Nothing)
-    let prg0   = runAsync c0 ch0 ch1 is state0
-    let prg1   = runAsync c1 ch1 ch0 is state1
+
+    let env0 = PrgEnv
+            { prgName         = "prg0"
+            , prgSendChan     = ch0
+            , prgRcvChan      = ch1
+            , prgCounter      = c0
+            , prgInstructions = is
+            }
+
+    let env1 = PrgEnv
+            { prgName         = "prg1"
+            , prgSendChan     = ch1
+            , prgRcvChan      = ch0
+            , prgCounter      = c1
+            , prgInstructions = is
+            }
+
+    let prg0 = runReaderT (runAsync state0) env0
+    let prg1 = runReaderT (runAsync state1) env1
     (res0, res1) <-
         Async.concurrently prg0 prg1
             `Exc.catch` \Exc.BlockedIndefinitelyOnMVar ->
                             (,) <$> readTVarIO c0 <*> readTVarIO c1
-    print (res0, res1)
     pure res1
 
 
 type Registers = V.Vector Int
+data PrgEnv = PrgEnv
+    { prgSendChan :: TMChan Int
+    , prgRcvChan :: TMChan Int
+    , prgCounter :: TVar Int
+    , prgName :: String
+    , prgInstructions :: V.Vector Instruction
+    }
 
 -- instruction pointer, registers, last emitted sound
 type CpuState = (Int, Registers, Maybe Int)
@@ -77,22 +103,24 @@ data Instruction
 
 data Status = Running CpuState | Halted deriving (Show, Eq)
 
-runAsync
-    :: TVar Int
-    -> TMChan Int
-    -> TMChan Int
-    -> V.Vector Instruction
-    -> CpuState
-    -> IO Int
-runAsync counter sendChan rcvChan is state@(i, _, _) =
+runAsync :: CpuState -> ReaderT PrgEnv IO Int
+runAsync state@(i, _, _) = do
+    env <- ask
+    let is       = prgInstructions env
+        sendChan = prgSendChan env
+        counter  = prgCounter env
     if i < 0 || i >= V.length is
-        then atomically $ closeTMChan sendChan *> readTVar counter
+        then liftIO $ atomically $ closeTMChan sendChan *> readTVar counter
         else do
             let ins = is V.! i
-            status <- execInstructionAsync counter sendChan rcvChan ins state
+            status <- execInstructionAsync state
             case status of
-                Halted -> atomically $ closeTMChan sendChan *> readTVar counter
-                Running s' -> runAsync counter sendChan rcvChan is s'
+                Halted ->
+                    liftIO
+                        $  atomically
+                        $  closeTMChan sendChan
+                        *> readTVar counter
+                Running s' -> runAsync s'
 
 
 execInstructions :: V.Vector Instruction -> S.State CpuState ()
@@ -119,26 +147,31 @@ execInstruction' (Jump x r) (i, regs, f) =
 execInstruction' (Recover x) (i, regs, f) = (i + 1, regs, f)
 
 
-execInstructionAsync
-    :: TVar Int
-    -> TMChan Int
-    -> TMChan Int
-    -> Instruction
-    -> CpuState
-    -> IO Status
-execInstructionAsync c sendChan _ (Send x) (i, regs, f) = atomically $ do
-    writeTMChan sendChan (regs V.! x)
-    modifyTVar' c        (+1)
-    pure $ Running (i + 1, regs, f)
-execInstructionAsync c _ rcvChan (Recover x) (i, regs, f) = do
-    mbVal <- atomically $ readTMChan rcvChan
-    pure $ case mbVal of
-        Nothing -> Halted
-        Just v  -> Running (i + 1, regs V.// [(x, v)], f)
-execInstructionAsync _ _ _ ins state = do
-    let s' = execInstruction' ins state
-    pure $ Running s'
-
+-- execInstructionAsync
+--     :: TVar Int
+--     -> TMChan Int
+--     -> TMChan Int
+--     -> Instruction
+--     -> CpuState
+--     -> IO Status
+execInstructionAsync :: CpuState -> ReaderT PrgEnv IO Status
+execInstructionAsync (i, regs, f) = do
+    env <- ask
+    let ins = prgInstructions env V.! i
+    case ins of
+        (Send x) -> do
+            liftIO $ atomically $ do
+                writeTMChan (prgSendChan env) (regs V.! x)
+                modifyTVar' (prgCounter env)  (+1)
+            pure $ Running (i + 1, regs, f)
+        (Recover x) -> do
+            mbVal <- liftIO $ atomically $ readTMChan (prgRcvChan env)
+            pure $ case mbVal of
+                Nothing -> Halted
+                Just v  -> Running (i + 1, regs V.// [(x, v)], f)
+        instruction -> do
+            let s' = execInstruction' ins (i, regs, f)
+            pure $ Running s'
 
 getVal :: Registers -> Reg -> Int
 getVal _    (Val i) = i
@@ -193,4 +226,4 @@ parseDigit = do
     d    <- some digitChar
     pure $ case sign of
         Nothing -> read d
-        Just _  -> read d * (-1)
+        Just _  -> negate $ read d
