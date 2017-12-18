@@ -1,3 +1,6 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Y2017.Day18 (answer1, answer2) where
 
 import Data.Functor
@@ -10,94 +13,136 @@ import Text.Megaparsec
 import Text.Megaparsec.String
 import qualified Data.HashMap.Strict as Map
 
+import qualified Control.Concurrent.Async as Async
+import Control.Concurrent.STM.TMChan as Chan
+import Control.Concurrent.STM
+import Control.Concurrent.STM.TVar
+import qualified Control.Exception as Exc
+
 answer1, answer2 :: IO Int
 answer1 = do
     is <- parseInput
-    let initialState = (0, Map.empty, 0)
-    let finalState@(i, regs, s) = execState (iterateWhile isNothing (execute is)) initialState
-    pure s
-answer2 = error "wip2"
+    let initialState = (0, V.replicate 5 0, Nothing)
+
+    let haltCond = do
+            (i, regs, f) <- get
+            if i < 0 || i >= V.length is
+                then pure True
+                else do
+                    let ins = is V.! i
+                    case ins of
+                        (Recover _) -> pure True
+                        _           -> pure False
+
+    let prog      = execInstructions is `untilM_` haltCond
+    let (_, _, f) = execState prog initialState
+    case f of
+        Nothing   -> error "program halted without receiving anything"
+        Just freq -> pure freq
+
+answer2 = do
+    is  <- parseInput
+    ch0 <- newTMChanIO
+    ch1 <- newTMChanIO
+    c0  <- newTVarIO 0
+    c1  <- newTVarIO 0
+    let state0 = (0, V.fromList [0, 0, 0, 0, 0], Nothing)
+    let state1 = (0, V.fromList [0, 0, 0, 1, 0], Nothing)
+    let prg0   = runAsync c0 ch0 ch1 is state0
+    let prg1   = runAsync c1 ch1 ch0 is state1
+    (res0, res1) <-
+        Async.concurrently prg0 prg1
+            `Exc.catch` \Exc.BlockedIndefinitelyOnMVar ->
+                            (,) <$> readTVarIO c0 <*> readTVarIO c1
+    print (res0, res1)
+    pure res1
 
 
-third (_, _, a) = a
+type Registers = V.Vector Int
 
+-- instruction pointer, registers, last emitted sound
+type CpuState = (Int, Registers, Maybe Int)
 
--- instruction pointer, registers state, last sound played
-type CpuState = (Int, Map.HashMap Char Int, Int)
+data Reg = Reg Int | Val Int deriving Show
 
-data Reg = Sym Char | Val Int deriving Show
 data Instruction
-    = Send Reg
-    | Set Reg Reg
-    | Add Reg Reg
-    | Mul Reg Reg
-    | Mod Reg Reg
-    | Recover Reg
-    | Jump Reg Reg
+    = Send Int
+  | Set Int Reg
+  | Add Int Reg
+  | Mul Int Reg
+  | Mod Int Reg
+  | Jump Reg Reg
+  | Recover Int
     deriving Show
 
+data Status = Running CpuState | Halted deriving (Show, Eq)
 
-
-execute :: V.Vector Instruction -> S.State CpuState (Maybe Int)
-execute is = do
-    state@(i, regs, s) <- get
+runAsync
+    :: TVar Int
+    -> TMChan Int
+    -> TMChan Int
+    -> V.Vector Instruction
+    -> CpuState
+    -> IO Int
+runAsync counter sendChan rcvChan is state@(i, _, _) =
     if i < 0 || i >= V.length is
-       then pure Nothing
-       else do
-           let instruction = is V.! i
-           modify' (executeInstruction instruction)
-           case instruction of
-             Recover r -> (Just . third) <$> get
-             _ -> pure Nothing
+        then atomically $ closeTMChan sendChan *> readTVar counter
+        else do
+            let ins = is V.! i
+            status <- execInstructionAsync counter sendChan rcvChan ins state
+            case status of
+                Halted -> atomically $ closeTMChan sendChan *> readTVar counter
+                Running s' -> runAsync counter sendChan rcvChan is s'
 
 
+execInstructions :: V.Vector Instruction -> S.State CpuState ()
+execInstructions instructions = do
+    (i, regs, _) <- get
+    if i < 0 || i > V.length instructions
+        then pure ()
+        else do
+            let ins = instructions V.! i
+            S.modify' (execInstruction' ins)
 
-executeInstruction :: Instruction -> CpuState -> CpuState
-executeInstruction (Send r) (i, regs, _) = (i + 1, regs, registerValue regs r)
--- TODO improve datatype to make that impossible
-executeInstruction (Set (Sym c) r) (i, regs, s) =
-    (i + 1, Map.insert c (registerValue regs r) regs, s)
-executeInstruction (Add r1@(Sym c) r2) (i, regs, s) =
-    ( i + 1
-    , Map.insert c (registerValue regs r1 + registerValue regs r2) regs
-    , s
-    )
-executeInstruction (Mul r1@(Sym c) r2) (i, regs, s) =
-    ( i + 1
-    , Map.insert c (registerValue regs r1 * registerValue regs r2) regs
-    , s
-    )
-executeInstruction (Mod r1@(Sym c) r2) (i, regs, s) =
-    ( i + 1
-    , Map.insert c (registerValue regs r1 `mod` registerValue regs r2) regs
-    , s
-    )
-executeInstruction (Recover r@(Sym c)) (i, regs, s) =
-    let freq = registerValue regs r
-    in  if freq == 0 then (i + 1, regs, s) else (i + 1, regs, freq)
-
-executeInstruction (Jump r@(Sym c) r2) (i, regs, s) =
-    let v = registerValue regs r
-    in  if v == 0 then (i + 1, regs, s) else (i + v, regs, s)
-executeInstruction i _ = error $ "cannot execute " ++ show i
+execInstruction' :: Instruction -> CpuState -> CpuState
+execInstruction' (Send x) (i, regs, _) = (i + 1, regs, Just $ regs V.! x)
+execInstruction' (Set x r) (i, regs, f) =
+    (i + 1, regs V.// [(x, getVal regs r)], f)
+execInstruction' (Add x r) (i, regs, f) =
+    (i + 1, regs V.// [(x, regs V.! x + getVal regs r)], f)
+execInstruction' (Mul x r) (i, regs, f) =
+    (i + 1, regs V.// [(x, regs V.! x * getVal regs r)], f)
+execInstruction' (Mod x r) (i, regs, f) =
+    (i + 1, regs V.// [(x, regs V.! x `mod` getVal regs r)], f)
+execInstruction' (Jump x r) (i, regs, f) =
+    if getVal regs x > 0 then (i + getVal regs r, regs, f) else (i + 1, regs, f)
+execInstruction' (Recover x) (i, regs, f) = (i + 1, regs, f)
 
 
+execInstructionAsync
+    :: TVar Int
+    -> TMChan Int
+    -> TMChan Int
+    -> Instruction
+    -> CpuState
+    -> IO Status
+execInstructionAsync c sendChan _ (Send x) (i, regs, f) = atomically $ do
+    writeTMChan sendChan (regs V.! x)
+    modifyTVar' c        (+1)
+    pure $ Running (i + 1, regs, f)
+execInstructionAsync c _ rcvChan (Recover x) (i, regs, f) = do
+    mbVal <- atomically $ readTMChan rcvChan
+    pure $ case mbVal of
+        Nothing -> Halted
+        Just v  -> Running (i + 1, regs V.// [(x, v)], f)
+execInstructionAsync _ _ _ ins state = do
+    let s' = execInstruction' ins state
+    pure $ Running s'
 
-registerValue :: Map.HashMap Char Int -> Reg -> Int
-registerValue regs (Sym r) = Map.lookupDefault 0 r regs
-registerValue _ (Val v) = v
 
-
-data ParseToken
-    = SendP
-    | SetP
-    | AddP
-    | MulP
-    | ModP
-    | RecoverP
-    | JumpP
-    deriving Show
-
+getVal :: Registers -> Reg -> Int
+getVal _    (Val i) = i
+getVal regs (Reg i) = regs V.! i
 
 parseInput :: IO (V.Vector Instruction)
 parseInput = do
@@ -108,52 +153,44 @@ parseInput = do
 
 parseInstructions = parseInstruction `sepEndBy` newline
 
-parseInstruction = do
-    i <- parseCommand
-    space
-    r1 <- parseRegister
-    case i of
-      SendP -> pure $ Send r1
-      RecoverP -> pure $ Recover r1
-      x -> do
-          space
-          r2 <- parseRegister
-          let constructor = case x of
-                AddP -> Add
-                ModP -> Mod
-                SetP -> Set
-                MulP -> Mul
-                JumpP -> Jump
-                _ -> error "wtf?"
-          pure $ constructor r1 r2
+parseInstruction =
+    ((string "snd" $> Send) <*> (space *> parseDest))
+        <|> (   (string "set" $> Set)
+            <*> (space *> parseDest)
+            <*> (space *> parseRegister)
+            )
+        <|> (   (string "add" $> Add)
+            <*> (space *> parseDest)
+            <*> (space *> parseRegister)
+            )
+        <|> (   (string "mul" $> Mul)
+            <*> (space *> parseDest)
+            <*> (space *> parseRegister)
+            )
+        <|> (   (string "mod" $> Mod)
+            <*> (space *> parseDest)
+            <*> (space *> parseRegister)
+            )
+        <|> (   (string "jgz" $> Jump)
+            <*> (space *> parseRegister)
+            <*> (space *> parseRegister)
+            )
+        <|> ((string "rcv" $> Recover) <*> (space *> parseDest))
 
-parseCommand :: Parser ParseToken
-parseCommand =
-    try (string "set" $> SetP)
-        <|> try (string "snd" $> SendP)
-        <|> try (string "add" $> AddP)
-        <|> try (string "mul" $> MulP)
-        <|> try (string "mod" $> ModP)
-        <|> try (string "rcv" $> RecoverP)
-        <|> (string "jgz" $> JumpP)
+parseRegister = (Reg <$> parseDest) <|> (Val <$> parseDigit)
 
-parseRegister = (Sym <$> letterChar) <|> (Val <$> parseDigit)
+parseDest :: Parser Int
+parseDest =
+    (char 'a' $> 0)
+        <|> (char 'b' $> 1)
+        <|> (char 'i' $> 2)
+        <|> (char 'p' $> 3)
+        <|> (char 'f' $> 4)
+
+parseDigit :: Parser Int
 parseDigit = do
     sign <- optional (char '-')
     d    <- some digitChar
     pure $ case sign of
         Nothing -> read d
         Just _  -> read d * (-1)
-
-
-test = V.fromList
-    [ Set (Sym 'a') (Val 1)
-    , Add (Sym 'a') (Val 2)
-    , Mul (Sym 'a') (Sym 'a')
-    , Mod (Sym 'a') (Val 5)
-    , Send (Sym 'a')
-    , Set (Sym 'a') (Val 0)
-    , Recover (Sym 'a')
-    , Jump (Sym 'a') (Val (-1))
-    , Jump (Sym 'a') (Val (-2))
-    ]

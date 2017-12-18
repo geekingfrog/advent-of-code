@@ -35,6 +35,9 @@ executable adventofcode
                      , monad-loops
                      , primitive
                      , array
+                     , async
+                     , stm
+                     , stm-chans
 
   ghc-options: -O2 -Wincomplete-patterns -threaded -with-rtsopts=-N -O2
 
