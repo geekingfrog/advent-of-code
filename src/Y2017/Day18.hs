@@ -147,13 +147,6 @@ execInstruction' (Jump x r) (i, regs, f) =
 execInstruction' (Recover x) (i, regs, f) = (i + 1, regs, f)
 
 
--- execInstructionAsync
---     :: TVar Int
---     -> TMChan Int
---     -> TMChan Int
---     -> Instruction
---     -> CpuState
---     -> IO Status
 execInstructionAsync :: CpuState -> ReaderT PrgEnv IO Status
 execInstructionAsync (i, regs, f) = do
     env <- ask
