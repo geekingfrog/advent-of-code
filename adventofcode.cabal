@@ -88,3 +88,4 @@ executable adventofcode
                , Y2017.Day16
                , Y2017.Day17
                , Y2017.Day18
+               , Y2017.Day19
