@@ -2,6 +2,7 @@
 
 module Y2017.Day08 (answer1, answer2) where
 
+import Data.Functor
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
@@ -49,7 +50,7 @@ parseInstruction :: Parser Ins
 parseInstruction = do
     name <- T.pack <$> some letterChar
     space
-    op <- (string "dec" >> pure (-)) <|> (string "inc" *> pure (+))
+    op <- (string "dec" >> pure (-)) <|> (string "inc" $> (+))
     space
     n <- parseNum
     space
@@ -71,9 +72,9 @@ parseNum = do
 
 parseCond :: (Ord a, Eq a) => Parser (a -> a -> Bool)
 parseCond =
-    (string "<=" *> pure (<=))
-        <|> (string ">=" *> pure (>=))
-        <|> (string ">" *> pure (>))
-        <|> (string "<" *> pure (<))
-        <|> (string "==" *> pure (==))
-        <|> (string "!=" *> pure (/=))
+    (string "<=" $> (<=))
+        <|> (string ">=" $> (>=))
+        <|> (string ">" $> (>))
+        <|> (string "<" $> (<))
+        <|> (string "==" $> (==))
+        <|> (string "!=" $> (/=))

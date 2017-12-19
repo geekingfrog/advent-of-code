@@ -31,6 +31,7 @@ solve start = go Set.empty (Seq.singleton (0, start))
               visited' = Set.union visited (Set.fromList nexts)
               seq'     = rest <> Seq.fromList (map (\x -> (n+1, x)) nexts)
           in  go visited' seq'
+    go _ _ = error "impossible!"
 
 
 

@@ -17,7 +17,8 @@ answer2 = do
 
 getData :: IO String
 getData =
-    readFile "./data/01.txt" >>= return . filter (\c -> c == '(' || c == ')')
+    filter (\c -> c == '(' || c == ')') <$> readFile "./data/01.txt"
 
 folder acc '(' = acc + 1
 folder acc ')' = acc - 1
+folder _ c = error $ "invalid symbol: " ++ [c]

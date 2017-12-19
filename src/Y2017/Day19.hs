@@ -1,87 +1,62 @@
 module Y2017.Day19 (answer1, answer2) where
 
+import Data.Functor
 import Data.Char
 import Data.Maybe
 import Data.Array as A
 import Data.Foldable
-import Data.List as L
+import Control.Applicative
 
 answer1 :: IO String
 answer1 = do
-    maze <- parseInput
-    let start = findStart maze
-    let trail = unfoldr (walk maze) (D, start)
-    pure $ catMaybes trail
-
--- solution: EPYDUXANIT (missing last letter)
--- not EPYDUXANI
+    (maze, trail) <- walkMaze
+    let letters = mapMaybe (getLetter maze) trail
+    pure letters
 
 answer2 :: IO Int
 answer2 = do
-    maze <- parseInput
-    let start = findStart maze
-    let trail = unfoldr (walk maze) (D, start)
-    pure $ length trail + 1
+    (maze, trail) <- walkMaze
+    pure $ length trail
 
 type Coord = (Int, Int)
 type Maze = Array Coord Char
 data Direction = U | L | D | R deriving (Show)
 
-
-walk :: Maze -> (Direction, Coord) -> Maybe (Maybe Char, (Direction, Coord))
-walk maze (d, c) = do
-    p' <- nextPos maze d c
-    let l = getLetter maze c
-    pure (l, p')
+walkMaze = do
+  maze <- parseInput
+  let start = findStart maze
+  pure (maze, start : walk maze D start)
 
 findStart grid =
     let ((x0,_), (x1,_)) = A.bounds grid
         Just (x,_) = asum $ map (\x -> get grid (x,0) >>= \v -> Just (x, v))[x0..x1]
      in (x,0)
 
-nextPos :: Maze -> Direction -> Coord -> Maybe (Direction, Coord)
-nextPos maze dir c@(x, y) = case get maze $ straight c dir of
-    Just _ -> Just (dir, straight c dir)
-    Nothing ->
-        let a    = left c dir
-            b    = right c dir
-            ares = (leftD dir, a)
-            bres = (rightD dir, b)
-        in  case (get maze a, get maze b) of
-                (Nothing, Nothing) -> Nothing -- end of maze
-                (Just _ , Nothing) -> Just ares
-                (Nothing, Just _ ) -> Just bres
-                (Just c1, Just c2) ->
-                    if c1 == '+' then Just ares else Just bres
+-- unfoldr doesn't give me the last result so I need this, which is really similar
+walk :: Maze -> Direction -> Coord -> [Coord]
+walk maze dir c = case nextPos maze dir c of
+    Nothing       -> []
+    Just (d, c) -> c : walk maze d c
+
+nextPos maze dir c = foldl1 (<|>) $ fmap (\x@(_, c) -> get maze c $> x) [straight c dir, left c dir, right c dir]
 
 getLetter maze c = get maze c >>= (\l -> if ord l >= 65 && ord l < 91 then Just l else Nothing)
 
 
-straight (x,y) U = (x, y-1)
-straight (x,y) L = (x-1, y)
-straight (x,y) D = (x, y+1)
-straight (x,y) R = (x+1, y)
+straight (x,y) U = (U, (x, y-1))
+straight (x,y) L = (L, (x-1, y))
+straight (x,y) D = (D, (x, y+1))
+straight (x,y) R = (R, (x+1, y))
 
-left (x, y) U = (x - 1, y)
-left (x, y) L = (x, y + 1)
-left (x, y) D = (x + 1, y)
-left (x, y) R = (x, y - 1)
+left (x, y) U = (L, (x - 1, y))
+left (x, y) L = (D, (x, y + 1))
+left (x, y) D = (R, (x + 1, y))
+left (x, y) R = (U, (x, y - 1))
 
-right (x, y) U = (x + 1, y)
-right (x, y) L = (x, y - 1)
-right (x, y) D = (x - 1, y)
-right (x, y) R = (x, y + 1)
-
-straightD d = id
-leftD U = L
-leftD L = D
-leftD D = R
-leftD R = U
-rightD U = R
-rightD L = U
-rightD D = L
-rightD R = D
-
+right (x, y) U = (R, (x + 1, y))
+right (x, y) L = (U, (x, y - 1))
+right (x, y) D = (L, (x - 1, y))
+right (x, y) R = (D, (x, y + 1))
 
 parseInput :: IO Maze
 parseInput = do
