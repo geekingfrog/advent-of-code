@@ -1,3 +1,5 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Y2017.Day20 (answer1, answer2) where
 
 import Text.Megaparsec
@@ -6,6 +8,8 @@ import Data.Foldable
 import Data.Ord
 import Data.Function
 import Data.List
+
+import qualified Data.HashSet as Set
 
 type Coord = (Int, Int, Int)
 type Particule = (Coord, Coord, Coord)
@@ -19,34 +23,35 @@ answer1 = do
 
 answer2 = do
     ps <- parseInput
-    mapM_ (putStrLn . show . length) (steps ps)
-    error "wip"
-
--- 574 too high
+    let allParticules = iterate (removeCollided . fmap step) ps
+    -- 100 is arbitrarily chosen, not super clean but it works™
+    pure $ length $ allParticules !! 100
 
 first (x, _, _) = x
 third (_, _, x) = x
 absCoord (x, y, z) = abs x + abs y + abs z
 
 
-(a1, b1, c1) `plus` (a2, b2, c2) = (a1+a2, b1+b2, c1+c2)
-x `mul` (a, b, c) = (x*a, x*b, x*c)
+(a1, b1, c1) +: (a2, b2, c2) = (a1+a2, b1+b2, c1+c2)
 
 
-pos :: Int -> Particule -> Coord
-pos t (a, v, p) = a `plus` (t `mul` v) `plus` (((t * (t+1)) `div` 2) `mul` p)
+steps :: [Particule] -> [Particule]
+steps = fmap step
 
+step :: Particule -> Particule
+step (x, y, z) = (x +: y +: z, y +: z, z)
 
-steps = go 0
+removeCollided :: [Particule] -> [Particule]
+removeCollided ps =
+    let collidedPos = findCollided ps
+     in filter (not . (`Set.member` collidedPos) . first) ps
+
+findCollided :: [Particule] -> Set.HashSet Coord
+findCollided = snd . foldl' go (Set.empty, Set.empty)
   where
-    go i ps =
-        let ps' = step i ps
-         in ps : go (i+1) ps'
-
-step :: Int -> [Particule] -> [Particule]
-step i ps =
-    let withPos = fmap (\p -> (pos i p, p)) ps
-     in snd <$> nubBy ((==) `on` fst) withPos
+    go (!seenPos, !dups) p = if Set.member (first p) seenPos
+        then (seenPos, Set.insert (first p) dups)
+        else (Set.insert (first p) seenPos, dups)
 
 
 parseInput = do
@@ -58,14 +63,14 @@ parseInput = do
 parseLine :: Parser Particule
 parseLine = do
     string "p="
-    p <- between (char '<') (char '>') parseTriple
+    p <- between (char '<') (char '>') parseCoord
     string ", v="
-    v <- between (char '<') (char '>') parseTriple
+    v <- between (char '<') (char '>') parseCoord
     string ", a="
-    a <- between (char '<') (char '>') parseTriple
+    a <- between (char '<') (char '>') parseCoord
     pure (p, v, a)
 
-parseTriple = (,,) <$> parseDigit <*> (char ',' *> parseDigit) <*> (char ',' *> parseDigit)
+parseCoord = (,,) <$> parseDigit <*> (char ',' *> parseDigit) <*> (char ',' *> parseDigit)
 
 parseDigit :: Parser Int
 parseDigit = do
@@ -74,3 +79,11 @@ parseDigit = do
     pure $ case sign of
         Nothing -> read d
         Just _  -> negate $ read d
+
+
+test =
+    [ ((-6, 0, 0), (3, 0, 0) , (0, 0, 0))
+    , ((-4, 0, 0), (2, 0, 0) , (0, 0, 0))
+    , ((-2, 0, 0), (1, 0, 0) , (0, 0, 0))
+    , ((3, 0, 0) , (-1, 0, 0), (0, 0, 0))
+    ]
