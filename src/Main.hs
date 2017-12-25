@@ -59,6 +59,7 @@ import qualified Y2017.Day21 as Y2017D21
 import qualified Y2017.Day22 as Y2017D22
 import qualified Y2017.Day23 as Y2017D23
 import qualified Y2017.Day24 as Y2017D24
+import qualified Y2017.Day25 as Y2017D25
 
 
 main :: IO ()
@@ -193,4 +194,5 @@ run2017 day pbNumber = case day * 10 + pbNumber of
     232 -> Y2017D23.answer2 >>= print
     241 -> Y2017D24.answer1 >>= print
     242 -> Y2017D24.answer2 >>= print
+    251 -> print Y2017D25.answer1
     _   -> print "Invalid puzzle number"

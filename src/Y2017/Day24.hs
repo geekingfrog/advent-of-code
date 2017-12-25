@@ -1,5 +1,11 @@
+{-# LANGUAGE DeriveFoldable #-}
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE FlexibleInstances #-}
+
 module Y2017.Day24 (answer1, answer2) where
 
+import Data.Monoid
 import Data.List.Split as L
 
 
@@ -13,8 +19,30 @@ answer2 = do
     let tree = allBridges (0,0) cs
     pure $ snd $ strengthWithLength tree
 
+testTree :: Rose (Int,Int)
+testTree = Rose (0,1) [Rose (1,2) [], Rose (1,3) [Rose (3,4) [], Rose (3,3) [], Rose (3,5) []]]
 
-data Rose a = Node a [Rose a] deriving Show
+data Rose a = Rose a [Rose a] deriving (Show, Functor, Foldable, Traversable)
+
+sumPair (a,b) = a+b
+
+newtype Add a = Add {unAdd :: a} deriving Show
+
+instance Monoid (Add Int) where
+    mempty = Add 0
+    (Add a) `mappend` (Add b) = Add (a+b)
+
+
+data RoseG f a = RoseG a (f a) deriving (Show, Functor, Foldable, Traversable)
+
+-- instance (Foldable f) => Foldable (RoseG f) where
+--     foldMap f (RoseG a k) = f a `mappend` foldMap f k
+
+newtype Max a = Max {unMax :: [a]} deriving Show
+
+-- instance Monoid (Pair Int) where
+--     mempty = (0, 0)
+--     Pair (a, b) `mappend` Pair (c, d) = Pair (a + c, b + d)
 
 
 allBridges :: (Int, Int) -> [(Int, Int)] -> Rose (Int, Int)
@@ -23,18 +51,18 @@ allBridges root@(a,b) xs =
         okCs = filter (\((x,y),_) -> x == b || y == b) candidates
         swapped = fmap (\e@((x,y),xs) -> if x == b then e else ((y,x),xs)) okCs
         children = fmap (uncurry allBridges) swapped
-     in Node root children
+     in Rose root children
 
 swap (a,b) = (b,a)
 
 maxStrength :: Rose (Int,Int) -> Int
-maxStrength (Node (a,b) []) = a + b
-maxStrength (Node (a,b) cs) = a + b + maximum (fmap maxStrength cs)
+maxStrength (Rose (a,b) []) = a + b
+maxStrength (Rose (a,b) cs) = a + b + maximum (fmap maxStrength cs)
 
 
 strengthWithLength :: Rose (Int, Int) -> (Int,Int)
-strengthWithLength (Node (a,b) []) = (1, a + b)
-strengthWithLength (Node (a,b) cs) =
+strengthWithLength (Rose (a,b) []) = (1, a + b)
+strengthWithLength (Rose (a,b) cs) =
     let children = fmap strengthWithLength cs
         (l, s) = maximum children
      in (1+l, a+b+s)
