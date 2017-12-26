@@ -57,8 +57,6 @@ const test = [
 function newProcess(ins, initialState) {
   // using js classes don't work with coroutines :/
   const instructions = ins;
-  // let registers = initialState;
-  // let i = 0;
   let playedBuffer = [];
   let state = {
     i:0,
@@ -74,6 +72,11 @@ function newProcess(ins, initialState) {
     return y;
   }
 
+  function binOp(f, a, b) {
+    state.registers[a] = f(getVal(a), getVal(b));
+    state.i++;
+  }
+
   function* start() {
     while (state.i>=0 && state.i<instructions.length) {
       let instruction = instructions[state.i];
@@ -87,25 +90,21 @@ function newProcess(ins, initialState) {
     let [t, a, b] = instruction.split(' ');
     switch(t) {
       case 'set':
-        state.registers[a] = getVal(b);
-        state.i++;
+        binOp((_, b) => b, a, b)
         break;
       case 'add':
-        state.registers[a] = getVal(a) + getVal(b);
-        state.i++;
+        binOp((a,b) => a+b, a, b);
         break;
       case 'mul':
-        state.registers[a] = getVal(a) * getVal(b);
-        state.i++;
+        binOp((a,b) => a*b, a, b);
         break;
       case 'mod':
-        state.registers[a] = getVal(a) % getVal(b);
-        state.i++;
+        binOp((a,b) => a%b, a, b);
         break;
       case 'jgz': {
         let x = getVal(a);
         if (x > 0) {
-          state.i = state.i + getVal(b);
+          state.i += getVal(b);
         } else {
           state.i++;
         }
@@ -134,42 +133,33 @@ function newProcess(ins, initialState) {
 
 function scheduler(p0, p1) {
 
-  let proc0 = {p: p0, sentCount: 0, sent: []};
-  let proc1 = {p: p1, sentCount: 0, sent: []};
+  let proc0 = {p: p0, sentCount: 0, started: false, done: false};
+  let proc1 = {p: p1, sentCount: 0, started: false, done: false};
+
   let current = proc0;
   let other = proc1;
-  let toSend = [];
 
-  // start both process to enter the main loop
-  let x = proc0.p.next();
-  proc0.sent = x.value || [];
-  proc0.sentCount = proc0.sent.length;
-  x = proc1.p.next();
-  proc1.sent = x.value || [];
-  proc1.sentCount = proc1.sent.length;
+  while(!other.done) {
+    let x = current.p.next(other.sent);
+    current.started = true;
+    current.done = x.done;
 
-  // start with the process awaiting (available items)
-  if (proc0.sent.length !== 0) {
-    current = proc1;
-    other = proc0;
-  } else {
-    current = proc0;
-    other = proc1;
+    if (!current.done) {
+      let v = x.value || [];
+      current.sent = v;
+      current.sentCount += v.length;
+    }
+
+    // only relevant for the first call to the processes
+    // since one process may not send anything when first yielding
+    if (current.sentCount !== 0) [current, other] = [other, current];
   }
 
-  while(other.sent.length !== 0) {
-    x = current.p.next(other.sent);
-
-    current.sent = x.value;
-    current.sentCount += x.value.length;
-    [current, other] = [other, current];
-
-  }
-
-  console.log(proc1.sentCount);
+  return proc1.sentCount;
 }
 
 const p0 = newProcess(raw, {'p': 0});
 const p1 = newProcess(raw, {'p': 1});
 
-let s = scheduler(p0.start(), p1.start());
+let result = scheduler(p0.start(), p1.start());
+console.log(result);
