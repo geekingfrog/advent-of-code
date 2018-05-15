@@ -3,6 +3,7 @@ module Y2017.Day25
   ) where
 
 import Data.Foldable as F
+import Data.Default
 
 answer1 :: Int
 answer1 = runTape
@@ -21,21 +22,25 @@ data State
     | F
      deriving (Show)
 
+data Bit = Zero | One deriving (Show, Eq)
+
+instance Default Bit where
+    def = Zero
+
 runTape =
     let n = 12964419
         (finalTape, finalState) = F.foldl' (\(t, s) _ -> stepTape t s)
-                                           (Tape [] False [], A)
+                                           (Tape [] Zero [], A)
                                            [1 .. n]
-        tapes = iterate (uncurry stepTape) (Tape [] False [], A)
-    in  countTape True finalTape
+    in  countTape One finalTape
 
 write :: Tape a -> a -> Tape a
 write (Tape xs _ ys) x = Tape xs x ys
 
-right, left :: Tape Bool -> Tape Bool
-right (Tape xs e []) = Tape (e:xs) False []
+right, left :: (Default a) => Tape a -> Tape a
+right (Tape xs e []) = Tape (e:xs) def []
 right (Tape xs e (y:ys)) = Tape (e:xs) y ys
-left (Tape [] e ys) = Tape [] False (e:ys)
+left (Tape [] e ys) = Tape [] def (e:ys)
 left (Tape (x:xs) e ys) = Tape xs x (e:ys)
 
 countTape :: Eq a => a -> Tape a -> Int
@@ -44,17 +49,17 @@ countTape k (Tape xs e ys) =
         + Prelude.length (Prelude.filter (==k) ys)
         + if k == e then 1 else 0
 
-stepTape :: Tape Bool -> State -> (Tape Bool, State)
+stepTape :: Tape Bit -> State -> (Tape Bit, State)
 stepTape t@(Tape _ e _) s = case (s, e) of
-    (A, False) -> (right $ write t True, B)
-    (A, True ) -> (right $ write t False, F)
-    (B, False) -> (left $ write t False, B)
-    (B, True ) -> (left $ write t True, C)
-    (C, False) -> (left $ write t True, D)
-    (C, True ) -> (right $ write t False, C)
-    (D, False) -> (left $ write t True, E)
-    (D, True ) -> (right $ write t True, A)
-    (E, False) -> (left $ write t True, F)
-    (E, True ) -> (left $ write t False, D)
-    (F, False) -> (right $ write t True, A)
-    (F, True ) -> (left $ write t False, E)
+    (A, Zero) -> (right $ write t One, B)
+    (A, One ) -> (right $ write t Zero, F)
+    (B, Zero) -> (left $ write t Zero, B)
+    (B, One ) -> (left $ write t One, C)
+    (C, Zero) -> (left $ write t One, D)
+    (C, One ) -> (right $ write t Zero, C)
+    (D, Zero) -> (left $ write t One, E)
+    (D, One ) -> (right $ write t One, A)
+    (E, Zero) -> (left $ write t One, F)
+    (E, One ) -> (left $ write t Zero, D)
+    (F, Zero) -> (right $ write t One, A)
+    (F, One ) -> (left $ write t Zero, E)
