@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 module Y2016.Day11 (answer1, answer2) where
 
 import Control.Monad
@@ -29,7 +31,7 @@ solve start = go Set.empty (Seq.singleton (0, start))
         | otherwise
         = let nexts    = filter (`Set.notMember`visited) (nextStates s)
               visited' = Set.union visited (Set.fromList nexts)
-              seq'     = rest <> Seq.fromList (map (\x -> (n+1, x)) nexts)
+              seq'     = rest <> Seq.fromList (fmap (n+1, ) nexts)
           in  go visited' seq'
     go _ _ = error "impossible!"
 

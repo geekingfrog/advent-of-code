@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -26,24 +25,19 @@ data Rose a = Rose a [Rose a] deriving (Show, Functor, Foldable, Traversable)
 
 sumPair (a,b) = a+b
 
-newtype Add a = Add {unAdd :: a} deriving Show
+newtype Add a = Add {unAdd :: a}
+    deriving Show
+
+instance Semigroup (Add Int) where
+    (Add a) <> (Add b) = Add (a+b)
 
 instance Monoid (Add Int) where
     mempty = Add 0
-    (Add a) `mappend` (Add b) = Add (a+b)
 
 
 data RoseG f a = RoseG a (f a) deriving (Show, Functor, Foldable, Traversable)
 
--- instance (Foldable f) => Foldable (RoseG f) where
---     foldMap f (RoseG a k) = f a `mappend` foldMap f k
-
 newtype Max a = Max {unMax :: [a]} deriving Show
-
--- instance Monoid (Pair Int) where
---     mempty = (0, 0)
---     Pair (a, b) `mappend` Pair (c, d) = Pair (a + c, b + d)
-
 
 allBridges :: (Int, Int) -> [(Int, Int)] -> Rose (Int, Int)
 allBridges root@(a,b) xs =

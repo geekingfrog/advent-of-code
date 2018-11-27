@@ -23,4 +23,4 @@ valid2 s = length (Set.fromList (map sort s)) == length s
 
 
 input :: IO [PassPhrase]
-input = (map words . lines) <$> readFile "data/2017/day04.txt"
+input = fmap words . lines <$> readFile "data/2017/day04.txt"

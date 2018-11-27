@@ -1,13 +1,15 @@
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Y2017.Day07 (answer1, answer2) where
 
 import Text.Megaparsec
-import Text.Megaparsec.Text
+import Text.Megaparsec.Char
 
 import Data.Ord
 import Data.List as L
 import Data.Maybe
+import Data.Void
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
@@ -15,14 +17,14 @@ import Data.Foldable
 import qualified Data.Set as Set
 import qualified Data.HashMap.Strict as Map
 
+type Parser = Parsec Void Text
+
 data Prog = Prog !Text !Int deriving Show
 data Tree a = Node a [Tree a] deriving (Show, Functor)
 
 
 answer1 :: IO Text
-answer1 = do
-    list <- parseInput
-    pure $ findRoot list
+answer1 = findRoot <$> parseInput
 
 answer2 :: IO Int
 answer2 = do

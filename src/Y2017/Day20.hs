@@ -3,13 +3,16 @@
 module Y2017.Day20 (answer1, answer2) where
 
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import Data.Foldable
 import Data.Ord
 import Data.Function
 import Data.List
+import Data.Void
 
 import qualified Data.HashSet as Set
+
+type Parser = Parsec Void String
 
 type Coord = (Int, Int, Int)
 type Particule = (Coord, Coord, Coord)

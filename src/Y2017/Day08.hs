@@ -4,19 +4,21 @@ module Y2017.Day08 (answer1, answer2) where
 
 import Data.Functor
 import Data.Text (Text)
+import Data.Void
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
 import Text.Megaparsec
-import Text.Megaparsec.Text
+import Text.Megaparsec.Char
 
 import Data.Foldable
 import Data.HashMap.Strict as Map
 
+type Parser = Parsec Void Text
+
 answer1, answer2 :: IO Int
-answer1 = do
-    instructions <- parseInput
-    pure $ maximum $ Map.elems $ foldl eval Map.empty instructions
+answer1 = maximum . Map.elems . foldl eval Map.empty <$> parseInput
+
 answer2 = do
     instructions <- parseInput
     let allStates = scanl eval Map.empty instructions

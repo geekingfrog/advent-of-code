@@ -1,7 +1,6 @@
 module Y2015.Day24 (answer1, answer2) where
 
-import Data.List (nub, sortBy, minimumBy)
-import Data.Ord (comparing)
+import Data.List (nub, sortBy, minimumBy, sortOn)
 import Control.Arrow (first)
 import Control.Monad.Trans.State
 import Control.Monad (guard)
@@ -11,7 +10,7 @@ answer1 =
     let
         target = sum weights `quot` 3
         firstGroups =
-            sortBy (comparing (length . fst)) $ selectTarget target weights
+            sortOn (length . fst) $ selectTarget target weights
         validFirstGroups =
             filter (\(g, rs) -> not . null $ selectTarget target rs) firstGroups
         bestFirstSize = length . fst $ head validFirstGroups

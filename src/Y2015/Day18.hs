@@ -1,7 +1,7 @@
 module Y2015.Day18 (answer1, answer2) where
 
 import qualified Data.Vector as V
-import Control.Monad (liftM)
+import Control.Monad (fmap)
 import Data.Text (chunksOf, pack, unpack)
 
 answer1 :: IO Int
@@ -69,7 +69,7 @@ nextStatus current neighbors =
             else if nOnNeighbors == 3 then On else Off
 
 getData :: IO Grid
-getData = liftM (V.fromList . map toLightStatus . filter (/='\n'))
+getData = fmap (V.fromList . map toLightStatus . filter (/='\n'))
                 (readFile "./data/18.txt")
   where
     toLightStatus '#' = On

@@ -1,12 +1,15 @@
 module Y2015.Day06 (answer1, answer2) where
 
 import Prelude hiding (replicate)
-import Control.Monad (liftM)
+import Control.Monad (fmap)
 import Text.Megaparsec hiding (Pos)
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import Control.Exception (throw, SomeException)
 import Data.Vector (Vector, replicate, (//), (!))
 import Data.List (foldl')
+import Data.Void
+
+type Parser = Parsec Void String
 
 answer1 :: IO Int
 answer1 = do

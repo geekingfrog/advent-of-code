@@ -2,12 +2,15 @@ module Y2017.Day09 (answer1, answer2) where
 
 
 import Data.Functor
+import Data.Void
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
 import Text.Megaparsec
-import Text.Megaparsec.Text
+import Text.Megaparsec.Char
+
+type Parser = Parsec Void Text
 
 answer1, answer2 :: IO Int
 answer1 = streamSize <$> parseInput

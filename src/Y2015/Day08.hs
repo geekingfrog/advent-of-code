@@ -1,10 +1,13 @@
 module Y2015.Day08 (answer1, answer2) where
 
-import Control.Monad (liftM)
+import Control.Monad (fmap)
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
+import Data.Void
 import Data.Char (chr, digitToInt)
 import Control.Exception (throw)
+
+type Parser = Parsec Void String
 
 answer1 :: IO Int
 answer1 = do
@@ -17,7 +20,7 @@ answer2 = do
     return $ sum (map (length . show) strings) - sum (map length strings)
 
 getData :: IO [String]
-getData = liftM lines (readFile "./data/08.txt")
+getData = fmap lines (readFile "./data/08.txt")
 
 countRealChars :: String -> Int
 countRealChars line = case runParser parseLine "parseLine" line of
@@ -36,6 +39,6 @@ hexChar :: Parser Char
 hexChar = do
     char '\\'
     char 'x'
-    a <- liftM digitToInt hexDigitChar
-    b <- liftM digitToInt hexDigitChar
+    a <- fmap digitToInt hexDigitChar
+    b <- fmap digitToInt hexDigitChar
     return $ chr (16 * a + b)

@@ -1,6 +1,6 @@
 module Y2015.Day05 (answer1, answer2) where
 
-import Control.Monad (liftM)
+import Control.Monad (fmap)
 import Control.Applicative (liftA2)
 import Data.List (find, tails)
 import Data.Maybe (mapMaybe)
@@ -16,7 +16,7 @@ answer1 = do
             words
     return $ length niceWords
 
-getData = liftM lines (readFile "./data/05.txt")
+getData = fmap lines (readFile "./data/05.txt")
 
 hasThreeVowels :: String -> Bool
 hasThreeVowels s = length (filter isVowel s) >= 3

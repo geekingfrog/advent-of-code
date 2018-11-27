@@ -2,10 +2,13 @@ module Y2015.Day23 (answer1, answer2) where
 
 import Control.Exception (throw)
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import qualified Data.Vector as V
 import Data.List (unfoldr)
-import Control.Monad (liftM)
+import Data.Void
+import Control.Monad (fmap)
+
+type Parser = Parsec Void String
 
 answer1 :: IO Int
 answer1 = do
@@ -84,7 +87,7 @@ offsetParser :: Parser Int
 offsetParser =
     read
         <$> (char '+' >> some digitChar)
-        <|> ((*(-1)) . read)
+        <|> (* (-1)) . read
         <$> (char '-' >> some digitChar)
 
 testP = V.fromList [Incr A, JumpOne A 2, Triple A, Incr A]

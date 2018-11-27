@@ -1,7 +1,10 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Y2017.Day12 (answer1, answer2) where
 
 import Data.Maybe
 import Data.Foldable
+import Data.Void
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
@@ -9,7 +12,9 @@ import qualified Data.IntMap as Map
 import qualified Data.IntSet as Set
 
 import Text.Megaparsec
-import Text.Megaparsec.Text
+import Text.Megaparsec.Char
+
+type Parser = Parsec Void T.Text
 
 answer1, answer2 :: IO Int
 answer1 = do

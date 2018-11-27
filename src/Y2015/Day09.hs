@@ -2,21 +2,20 @@ module Y2015.Day09 (answer1, answer2) where
 
 import Control.Exception (throw)
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
+import Data.Void
 import Debug.Trace
 import Data.List (find, nub)
 
 import Tsp
 
+type Parser = Parsec Void String
+
 answer1 :: IO Int
-answer1 = do
-    vertices <- getData
-    return $ fst $ minCycle vertices
+answer1 = fst . minCycle <$> getData
 
 answer2 :: IO Int
-answer2 = do
-    vertices <- getData
-    return $ fst $ maxCycle vertices
+answer2 = fst . maxCycle <$> getData
 
 -- Parsing
 

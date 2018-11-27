@@ -8,13 +8,13 @@ import Data.Vector as V (foldl')
 import Data.Aeson
 import Data.Scientific (toBoundedInteger)
 import Data.Maybe (fromMaybe)
-import Control.Monad (liftM)
+import Control.Monad (fmap)
 
 answer1 :: IO Int
-answer1 = liftM sumNumbers getData
+answer1 = fmap sumNumbers getData
 
 answer2 :: IO Int
-answer2 = liftM (sumNumbers . removeRed) getData
+answer2 = fmap (sumNumbers . removeRed) getData
 
 sumNumbers :: Value -> Int
 sumNumbers (Object o) = M.foldl' (\acc v -> acc + sumNumbers v) 0 o

@@ -5,12 +5,13 @@ module Y2017.Day18 (answer1, answer2) where
 
 import Data.Functor
 import Data.Maybe
+import Data.Void
 import Control.Monad
 import Control.Monad.State.Lazy as S
 import Control.Monad.Loops
 import qualified Data.Vector as V
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import qualified Data.HashMap.Strict as Map
 
 import qualified Control.Concurrent.Async as Async
@@ -21,6 +22,8 @@ import qualified Control.Exception as Exc
 import Control.Monad.IO.Class (liftIO)
 
 import Control.Monad.Reader
+
+type Parser = Parsec Void String
 
 answer1, answer2 :: IO Int
 answer1 = do

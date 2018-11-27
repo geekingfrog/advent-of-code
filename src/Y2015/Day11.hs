@@ -3,7 +3,7 @@ module Y2015.Day11 (answer1, answer2) where
 import Data.List (groupBy, nubBy)
 
 answer1 :: String
-answer1 = head $ nextPasswords
+answer1 = head nextPasswords
 
 answer2 :: String
 answer2 = nextPasswords !! 1
@@ -18,11 +18,11 @@ next (c:cs) = let c' = succ c in if c' == '{' then 'a' : next cs else c' : cs
 
 validPassword s = hasPairs s && not (hasForbiddenLetter s) && hasSequence s
 
-hasForbiddenLetter s = any (\c -> c == 'i' || c == 'o' || c == 'l') s
+hasForbiddenLetter = any (\c -> c == 'i' || c == 'o' || c == 'l')
 
 hasSequence s = checkSequence $ zip3 s (tail s) (tail $ tail s)
   -- remember we're using reversed input
-    where checkSequence s' = any (\(a, b, c) -> a == succ b && b == succ c) s'
+    where checkSequence = any (\(a, b, c) -> a == succ b && b == succ c)
 
 hasPairs s =
     let pairs     = genPairs s

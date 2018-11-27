@@ -8,17 +8,21 @@ module Y2017.Day23
 
 import Data.Char
 import Data.Functor
+import Data.Void
 import Data.Maybe
+import Data.Foldable
 import Control.Monad
 import Control.Monad.State.Strict as S
 import Control.Monad.Loops
 import Data.Vector ((!))
 import qualified Data.Vector as V
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import qualified Data.HashMap.Strict as Map
 
 import Data.Numbers.Primes
+
+type Parser = Parsec Void String
 
 answer1, answer2 :: IO Int
 answer1 = do
@@ -64,7 +68,7 @@ isMul _ = False
 runStep :: V.Vector Instruction -> S.State CpuState (Maybe Instruction)
 runStep instructions = do
     i <- getInstruction instructions
-    traverse execInstruction i
+    traverse_ execInstruction i
     pure i
 
 getInstruction :: V.Vector Instruction -> S.State CpuState (Maybe Instruction)

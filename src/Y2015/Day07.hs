@@ -1,15 +1,19 @@
 module Y2015.Day07 (answer1, answer2) where
 
 import Data.Word (Word16)
+import Control.Applicative (liftA2)
 import qualified Data.HashMap.Strict as M
 import Data.Hashable (Hashable)
 import Data.Bits ((.&.), (.|.), complement, shiftL, shiftR)
-import Control.Monad (liftM)
+import Data.Void
+import Control.Monad (fmap)
 import Control.Monad.State
 
 import Text.Megaparsec hiding (State, Label)
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import Control.Exception (throw)
+
+type Parser = Parsec Void String
 
 answer1 :: IO Int
 answer1 = do
@@ -60,9 +64,9 @@ eval (Label a) = do
             modify $ M.insert a (Val result)
             return result
 
-eval (Not a     ) = liftM complement (eval a)
-eval (And    a b) = liftM2 (.&.) (eval a) (eval b)
-eval (Or     a b) = liftM2 (.|.) (eval a) (eval b)
+eval (Not a     ) = fmap complement (eval a)
+eval (And    a b) = liftA2 (.&.) (eval a) (eval b)
+eval (Or     a b) = liftA2 (.|.) (eval a) (eval b)
 eval (LShift a s) = eval a >>= \res -> return $ shiftL res s
 eval (RShift a s) = eval a >>= \res -> return $ shiftR res s
 
@@ -118,6 +122,7 @@ bitShiftLine = do
     instruction "LSHIFT" = LShift
     instruction _        = RShift
 
-parseLabel =
-    (liftM Label $ some letterChar) <|> (liftM (Val . read) $ some digitChar)
+parseLabel
+    =   Label <$> some letterChar
+    <|> Val . read <$> some digitChar
 parseOutput = string " -> " >> many lowerChar

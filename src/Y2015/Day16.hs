@@ -1,16 +1,19 @@
 module Y2015.Day16 (answer1, answer2) where
 
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import Control.Exception
 import Data.Function (on)
-import Control.Monad (liftM)
+import Control.Monad (fmap)
+import Data.Void
+
+type Parser = Parsec Void String
 
 answer1 :: IO Int
-answer1 = liftM (fst . head . filter checkAunt1) getData
+answer1 = fmap (fst . head . filter checkAunt1) getData
 
 answer2 :: IO Int
-answer2 = liftM (fst . head . filter checkAunt2) getData
+answer2 = fmap (fst . head . filter checkAunt2) getData
 
 type Name = Int
 type Attr = (String, Int)

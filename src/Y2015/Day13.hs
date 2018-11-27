@@ -1,23 +1,26 @@
 module Y2015.Day13 (answer1, answer2) where
 
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import Control.Exception (throw)
 
 import Data.Maybe (fromMaybe)
 import Data.List (find, nub)
-import Control.Monad (liftM)
+import Data.Void
+import Control.Monad (fmap)
 import Tsp (Vertex, Cost, maxCycle)
+
+type Parser = Parsec Void String
 
 answer1 :: IO Int
 answer1 = do
-    vertices <- liftM (nub . adjustCosts) getData
+    vertices <- fmap (nub . adjustCosts) getData
     let optimal = optimalSitting vertices
     return $ sum $ map third optimal
 
 answer2 :: IO Int
 answer2 = do
-    vertices <- liftM (nub . adjustCosts) getData
+    vertices <- fmap (nub . adjustCosts) getData
     let optimal = optimalSitting vertices
     let costs   = map third optimal
     return $ sum costs - minimum costs

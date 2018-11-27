@@ -18,4 +18,4 @@ answer2 = show . fst . head $ filter
 
 input = byteString "yzbqklnj"
 
-candidates = map (\d -> toLazyByteString $ input <> (int32Dec d)) [0 ..]
+candidates = map (\d -> toLazyByteString $ input <> int32Dec d) [0 ..]

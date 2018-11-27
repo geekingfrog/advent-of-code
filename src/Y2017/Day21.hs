@@ -1,11 +1,14 @@
 module Y2017.Day21 (answer1, answer2) where
 
 import Data.Maybe
+import Data.Void
 import Data.Array ((!))
 import qualified Data.Array as A
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 import Data.List as L
+
+type Parser = Parsec Void String
 
 answer1, answer2 :: IO Int
 answer1 = solve 5

@@ -7,7 +7,7 @@ import Data.List (nub, maximumBy)
 import Data.Ord (comparing)
 import Control.Arrow (second)
 import Data.Algorithms.KMP (build, match)
-import Control.Monad (liftM)
+import Control.Monad (fmap)
 
 data Rose a = Rose a [Rose a] deriving (Show, Eq)
 
@@ -67,7 +67,7 @@ reductions rplList s = Rose s (map (reductions rplList) (reduce rplList s))
 
 roseDepth :: Rose String -> Maybe Int
 roseDepth (Rose s []) = if s == "e" then Just 0 else Nothing
-roseDepth (Rose s xs) = liftM (+1) (minimumMay . catMaybes $ map roseDepth xs)
+roseDepth (Rose s xs) = fmap (+1) (minimumMay . catMaybes $ map roseDepth xs)
 
 minimumMay [] = Nothing
 minimumMay xs = Just $ minimum xs

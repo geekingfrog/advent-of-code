@@ -1,6 +1,6 @@
 module Y2015.Day03 (answer1, answer2) where
 
-import Control.Monad (liftM)
+import Control.Monad (fmap)
 import Data.List (scanl, nub)
 
 type Pos = (Int, Int)
@@ -21,7 +21,7 @@ answer2 = do
     let robotHouses     = scanl move (0, 0) robotDirections
     return . length . nub $ santaHouses ++ robotHouses
 
-getData = liftM (filter (/='\n')) (readFile "./data/03.txt")
+getData = fmap (filter (/='\n')) (readFile "./data/03.txt")
 
 move :: Pos -> Char -> Pos
 move (x, y) 'v' = (x, y - 1)

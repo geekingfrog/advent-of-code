@@ -1,12 +1,17 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Y2017.Day11 (answer1, answer2) where
 
 import Data.Functor
+import Data.Void
 import Text.Megaparsec hiding (Pos)
-import Text.Megaparsec.Text
+import Text.Megaparsec.Char
 import Data.Foldable
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
+
+type Parser = Parsec Void T.Text
 
 answer1, answer2 :: IO Int
 answer1 = do
