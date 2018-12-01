@@ -34,6 +34,8 @@ import qualified Y2015.Day25 as D25
 import qualified Y2016.Day11 as Y2016D11
 import qualified Y2016.Day15 as Y2016D15
 import qualified Y2016.Day19 as Y2016D19
+import qualified Y2016.Day22 as Y2016D22
+
 
 import qualified Y2017.Day01 as Y2017D01
 import qualified Y2017.Day02 as Y2017D02
@@ -61,6 +63,7 @@ import qualified Y2017.Day23 as Y2017D23
 import qualified Y2017.Day24 as Y2017D24
 import qualified Y2017.Day25 as Y2017D25
 
+import qualified Y2018.Day01 as Y2018D01
 
 main :: IO ()
 main = do
@@ -79,6 +82,7 @@ main = do
         2015 -> run2015 day pbNumber
         2016 -> run2016 day pbNumber
         2017 -> run2017 day pbNumber
+        2018 -> run2018 day pbNumber
         _    -> die $ "year unknown: " <> show year
 
 
@@ -142,6 +146,8 @@ run2016 day pbNumber = case day * 10 + pbNumber of
     151 -> print Y2016D15.answer1
     152 -> print Y2016D15.answer2
     192 -> print Y2016D19.answer2
+    221 -> Y2016D22.answer1 >>= print
+    222 -> Y2016D22.answer2 >>= print
     _   -> print "Invalid puzzle number"
 
 run2017 :: Int -> Int -> IO ()
@@ -196,3 +202,9 @@ run2017 day pbNumber = case day * 10 + pbNumber of
     242 -> Y2017D24.answer2 >>= print
     251 -> print Y2017D25.answer1
     _   -> print "Invalid puzzle number"
+
+run2018 :: Int -> Int -> IO ()
+run2018 day pbNumber = case day * 10 + pbNumber of
+    11 -> print Y2018D01.answer1
+    12 -> print Y2018D01.answer2
+    _ -> print "Invalid puzzle number"
