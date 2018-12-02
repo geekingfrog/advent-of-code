@@ -7,16 +7,16 @@ import Data.Array as A
 import Data.Foldable
 import Control.Applicative
 
-answer1 :: IO String
+answer1 :: IO ()
 answer1 = do
     (maze, trail) <- walkMaze
     let letters = mapMaybe (getLetter maze) trail
-    pure letters
+    putStrLn letters
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     (maze, trail) <- walkMaze
-    pure $ length trail
+    print $ length trail
 
 type Coord = (Int, Int)
 type Maze = Array Coord Char

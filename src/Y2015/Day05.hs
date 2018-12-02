@@ -5,7 +5,7 @@ import Control.Applicative (liftA2)
 import Data.List (find, tails)
 import Data.Maybe (mapMaybe)
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     words <- getData
     let
@@ -14,7 +14,7 @@ answer1 = do
                 (isNaughty s)
             )
             words
-    return $ length niceWords
+    print $ length niceWords
 
 getData = fmap lines (readFile "./data/05.txt")
 
@@ -41,12 +41,12 @@ isNaughty s = any badCombo $ zip s (tail s)
     badCombo _          = False
 
 ---- day 2
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     words <- getData
     let niceWords =
             filter (\s -> pairWithNoOverlap s && hasIntercalated s) words
-    return $ length niceWords
+    print $ length niceWords
 
 pairWithPos s = zip3 [0 ..] s (tail s)
 samePair (_, a, b) (_, c, d) = a == c && b == d

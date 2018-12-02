@@ -6,15 +6,15 @@ import Data.List (sort)
 type PassPhrase = [String]
 
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     passPhrases <- input
     let c = length $ filter valid passPhrases
-    pure c
+    print c
 answer2 = do
     passPhrases <- input
     let c = length $ filter valid2 passPhrases
-    pure c
+    print c
 
 
 valid, valid2 :: PassPhrase -> Bool

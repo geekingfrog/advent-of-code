@@ -11,17 +11,17 @@ import Data.Void
 
 type Parser = Parsec Void String
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     instructions <- getInstructions
     let finalGrid = foldl' applyInstruction initialGrid instructions
-    return $ countLightOn finalGrid
+    print $ countLightOn finalGrid
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     instructions <- getInstructions
     let finalGrid = foldl' applyInstruction2 initialBrightGrid instructions
-    return $ totalBrightness finalGrid
+    print $ totalBrightness finalGrid
 
 ------------------------------------------------------------
 --  Some types

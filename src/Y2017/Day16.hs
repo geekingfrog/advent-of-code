@@ -11,10 +11,10 @@ import qualified Data.Vector as V
 import Data.Hashable
 import qualified Data.HashSet as Set
 
-answer1, answer2 :: IO String
+answer1, answer2 :: IO ()
 answer1 = do
     moves <- parseInput
-    pure $ V.toList $ perform moves $ V.fromList ['a'..'p']
+    putStrLn $ V.toList $ perform moves $ V.fromList ['a'..'p']
 answer2 = do
     moves <- parseInput
     let start = V.fromList ['a'..'p']
@@ -22,7 +22,7 @@ answer2 = do
         states = iterate (perform moves) start
         period = findPeriod $ fmap V.toList states
         final = states !! ((10 ^ 9) `mod` period)
-    pure $ V.toList final
+    putStrLn $ V.toList final
 
 data Move = Spin Int | Exchange Int Int | Partner Char Char deriving (Show)
 

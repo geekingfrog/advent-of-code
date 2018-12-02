@@ -18,17 +18,17 @@ type Coord = (Int, Int, Int)
 type Particule = (Coord, Coord, Coord)
 -- x(t) = x0 + t*v0 + (t * (t+1)) / 2 * p0
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     ps <- parseInput
     let withIdx = zip [0..] ps
-    pure $ fst $ minimumBy (compare `on` (absCoord . third . snd)) withIdx
+    print $ fst $ minimumBy (compare `on` (absCoord . third . snd)) withIdx
 
 answer2 = do
     ps <- parseInput
     let allParticules = iterate (removeCollided . fmap step) ps
     -- 100 is arbitrarily chosen, not super clean but it works™
-    pure $ length $ allParticules !! 100
+    print $ length $ allParticules !! 100
 
 first (x, _, _) = x
 third (_, _, x) = x

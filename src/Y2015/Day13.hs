@@ -12,18 +12,18 @@ import Tsp (Vertex, Cost, maxCycle)
 
 type Parser = Parsec Void String
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     vertices <- fmap (nub . adjustCosts) getData
     let optimal = optimalSitting vertices
-    return $ sum $ map third optimal
+    print $ sum $ map third optimal
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     vertices <- fmap (nub . adjustCosts) getData
     let optimal = optimalSitting vertices
     let costs   = map third optimal
-    return $ sum costs - minimum costs
+    print $ sum costs - minimum costs
 
 optimalSitting :: [Vertex] -> [Vertex]
 optimalSitting vs =

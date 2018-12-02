@@ -25,7 +25,7 @@ import Control.Monad.Reader
 
 type Parser = Parsec Void String
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     is <- parseInput
     let initialState = (0, V.replicate 5 0, Nothing)
@@ -44,7 +44,7 @@ answer1 = do
     let (_, _, f) = execState prog initialState
     case f of
         Nothing   -> error "program halted without receiving anything"
-        Just freq -> pure freq
+        Just freq -> print freq
 
 answer2 = do
     is  <- parseInput
@@ -77,7 +77,7 @@ answer2 = do
         Async.concurrently prg0 prg1
             `Exc.catch` \Exc.BlockedIndefinitelyOnMVar ->
                             (,) <$> readTVarIO c0 <*> readTVarIO c1
-    pure res1
+    print res1
 
 
 type Registers = V.Vector Int

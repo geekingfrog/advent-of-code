@@ -9,11 +9,11 @@ import Data.Void
 
 type Parser = Parsec Void String
 
-answer1 :: IO Int
-answer1 = fmap (fst . head . filter checkAunt1) getData
+answer1 :: IO ()
+answer1 = fmap (fst . head . filter checkAunt1) getData >>= print
 
-answer2 :: IO Int
-answer2 = fmap (fst . head . filter checkAunt2) getData
+answer2 :: IO ()
+answer2 = fmap (fst . head . filter checkAunt2) getData >>= print
 
 type Name = Int
 type Attr = (String, Int)

@@ -3,17 +3,17 @@ module Y2015.Day20 (answer1, answer2) where
 import Data.List (nub, sort)
 import Data.Numbers.Primes
 
-answer1 :: Integer
+answer1 :: IO ()
 answer1 =
     let presents = map numberOfPresents [1 ..]
         pairs    = zip [1 ..] presents
-    in  fst . head $ dropWhile ((>=) targetPresent . snd) pairs
+    in  print $ fst . head $ dropWhile ((>=) targetPresent . snd) pairs
 
-answer2 :: Integer
+answer2 :: IO ()
 answer2 =
     let presents = map numberOfPresents' [1 ..]
         pairs    = zip [1 ..] presents
-    in  fst . head $ dropWhile ((>=) targetPresent . snd) pairs
+    in  print $ fst . head $ dropWhile ((>=) targetPresent . snd) pairs
 
 targetPresent = 36000000
 

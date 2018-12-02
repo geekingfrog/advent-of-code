@@ -4,11 +4,11 @@ import Data.Vector ((!))
 import qualified Data.Vector as V
 import qualified Data.Set as Set
 
-answer1, answer2 :: Int
-answer1 = loop 0 Set.empty $ iterate balance input
+answer1, answer2 :: IO ()
+answer1 = print $ loop 0 Set.empty $ iterate balance input
 answer2 = let allBalances = iterate balance input
               start = loop 0 Set.empty allBalances
-           in loop 0 Set.empty (drop start allBalances)
+           in print $ loop 0 Set.empty (drop start allBalances)
 
 balance :: V.Vector Int -> V.Vector Int
 balance v =

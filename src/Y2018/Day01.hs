@@ -4,10 +4,10 @@ import Data.Maybe
 import Data.Foldable
 import qualified Data.Set as Set
 
-answer1, answer2 :: IO Int
-answer1 = foldl' (+) 0 <$> getFreqs
+answer1, answer2 :: IO ()
+answer1 = foldl' (+) 0 <$> getFreqs >>= print
 
-answer2 = snd . loop (mempty, 0) . cycle <$> getFreqs
+answer2 = snd . loop (mempty, 0) . cycle <$> getFreqs >>= print
  where
   loop (!seen, !current) (x : xs) = if current `elem` seen
     then (seen, current)

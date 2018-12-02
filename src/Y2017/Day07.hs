@@ -23,14 +23,14 @@ data Prog = Prog !Text !Int deriving Show
 data Tree a = Node a [Tree a] deriving (Show, Functor)
 
 
-answer1 :: IO Text
-answer1 = findRoot <$> parseInput
+answer1 :: IO ()
+answer1 = findRoot <$> parseInput >>= T.putStrLn
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     list <- parseInput
     let t = buildTree (findRoot list) list
-    pure $ balance t 0
+    print $ balance t 0
 
 
 findRoot :: [(Prog, [Text])] -> Text

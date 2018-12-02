@@ -5,8 +5,8 @@ module Y2017.Day25
 import Data.Foldable as F
 import Data.Default
 
-answer1 :: Int
-answer1 = runTape
+answer1 :: IO ()
+answer1 = print runTape
 
 data Tape a = Tape [a] a [a]
 

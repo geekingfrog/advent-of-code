@@ -5,11 +5,11 @@ module Y2015.Day15 (answer1, answer2) where
 import Data.List (foldl', maximumBy)
 import Data.Ord
 
-answer1 :: Int
-answer1 = maximum $ map mixCost (allMixes target)
+answer1 :: IO ()
+answer1 = print $ maximum $ map mixCost (allMixes target)
 
-answer2 :: Int
-answer2 = maximum $ map mixCost (allMixesWithCalories target targetCalories)
+answer2 :: IO ()
+answer2 = print $ maximum $ map mixCost (allMixesWithCalories target targetCalories)
 
 data Ingredient = Ingredient {
   name       :: String,

@@ -2,11 +2,11 @@ module Y2015.Day11 (answer1, answer2) where
 
 import Data.List (groupBy, nubBy)
 
-answer1 :: String
-answer1 = head nextPasswords
+answer1 :: IO ()
+answer1 = putStrLn $ head nextPasswords
 
-answer2 :: String
-answer2 = nextPasswords !! 1
+answer2 :: IO ()
+answer2 = putStrLn $ nextPasswords !! 1
 
 nextPasswords = map reverse $ filter validPassword $ iterate next input
 

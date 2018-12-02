@@ -10,11 +10,11 @@ import Data.Scientific (toBoundedInteger)
 import Data.Maybe (fromMaybe)
 import Control.Monad (fmap)
 
-answer1 :: IO Int
-answer1 = fmap sumNumbers getData
+answer1 :: IO ()
+answer1 = fmap sumNumbers getData >>= print
 
-answer2 :: IO Int
-answer2 = fmap (sumNumbers . removeRed) getData
+answer2 :: IO ()
+answer2 = fmap (sumNumbers . removeRed) getData >>= print
 
 sumNumbers :: Value -> Int
 sumNumbers (Object o) = M.foldl' (\acc v -> acc + sumNumbers v) 0 o

@@ -16,15 +16,15 @@ import Text.Megaparsec.Char
 
 type Parser = Parsec Void T.Text
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     parsed <- parseInput
     let graph = buildGraph parsed
-    pure $ Set.size $ descendants graph 0
+    print $ Set.size $ descendants graph 0
 answer2 = do
     parsed <- parseInput
     let graph = buildGraph parsed
-    pure $ length $ findGroups graph
+    print $ length $ findGroups graph
 
 
 type Graph = Map.IntMap [Int]

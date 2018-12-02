@@ -5,7 +5,7 @@ import Control.Arrow (first)
 import Control.Monad.Trans.State
 import Control.Monad (guard)
 
--- answer1 :: Int
+answer1 :: IO ()
 answer1 =
     let
         target = sum weights `quot` 3
@@ -17,9 +17,9 @@ answer1 =
         candidates    = takeWhile ((<=bestFirstSize) . length)
             $ map fst validFirstGroups
     in
-        minimum $ map product candidates
+        print $ minimum $ map product candidates
 
-answer2 :: Int
+answer2 :: IO ()
 answer2 =
     let
 -- optimistic setting, maybe there is no way to partition the
@@ -28,7 +28,7 @@ answer2 =
         groups     = map fst (selectTarget (sum weights `quot` 4) weights)
         bestSize   = length $ head groups
         candidates = takeWhile ((<=bestSize) . length) groups
-    in  minimum $ map product candidates
+    in  print $ minimum $ map product candidates
 
 select :: [Int] -> [(Int, [Int])]
 select []     = []

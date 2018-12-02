@@ -7,9 +7,9 @@ import Control.Monad.State.Strict
 import qualified Data.HashMap.Strict as Map
 import Control.Monad.Loops
 
-answer1, answer2 :: Int
-answer1 = dist $ coord input
-answer2 = evalState
+answer1, answer2 :: IO ()
+answer1 = print $ dist $ coord input
+answer2 = print $ evalState
     (iterateUntil (>= input) walk)
     (1, Map.singleton (0, 0) 1)
 

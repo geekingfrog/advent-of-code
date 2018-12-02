@@ -4,9 +4,9 @@ import Data.Char
 import qualified Data.Vector as V
 import Data.Vector ((!))
 
-answer1, answer2 :: Int
-answer1 = solve1 input
-answer2 = solve2 input
+answer1, answer2 :: IO ()
+answer1 = print $ solve1 input
+answer2 = print $ solve2 input
 
 
 solve1 :: [Int] -> Int

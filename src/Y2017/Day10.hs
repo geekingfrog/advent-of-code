@@ -10,13 +10,13 @@ import Data.Char
 import qualified Data.Vector as V
 import Data.Monoid
 
-answer1 :: Int
+answer1 :: IO ()
 answer1 =
     let (_, _, v) = foldl hashStep (0, 0, V.fromList [0 .. 255]) input
-    in  (v V.! 0) * (v V.! 1)
+    in  print $ (v V.! 0) * (v V.! 1)
 
-answer2 :: String
-answer2 = knotHash input2
+answer2 :: IO ()
+answer2 = putStrLn $ knotHash input2
 
 hashStep :: (Int, Int, V.Vector Int) -> Int -> (Int, Int, V.Vector Int)
 hashStep (!skip, pos, !v) l =

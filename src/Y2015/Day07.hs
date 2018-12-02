@@ -15,13 +15,13 @@ import Control.Exception (throw)
 
 type Parser = Parsec Void String
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     instructions <- getInstructions
     let env = M.fromList instructions
-    return . fromIntegral $ evalState (eval $ Label "a") env
+    print . fromIntegral $ evalState (eval $ Label "a") env
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     instructions <- getInstructions
     let env                    = M.fromList instructions
@@ -30,7 +30,7 @@ answer2 = do
     -- override b with the result of wire a
     let env2                   = M.insert "b" (Val result1) env
     let result2                = evalState (eval $ Label "a") env2
-    return $ fromIntegral result2
+    print $ fromIntegral result2
 
 ------------------------------------------------------------
 --  Some types

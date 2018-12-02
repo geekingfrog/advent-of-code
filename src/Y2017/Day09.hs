@@ -12,9 +12,9 @@ import Text.Megaparsec.Char
 
 type Parser = Parsec Void Text
 
-answer1, answer2 :: IO Int
-answer1 = streamSize <$> parseInput
-answer2 = garbageSize <$> parseInput
+answer1, answer2 :: IO ()
+answer1 = parseInput >>= print . streamSize
+answer2 = parseInput >>= print . garbageSize
 
 
 streamSize = go 1

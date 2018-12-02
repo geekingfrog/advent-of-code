@@ -2,11 +2,11 @@ module Y2015.Day10 (answer1, answer2) where
 
 import Data.List (group)
 
-answer1 :: Int
-answer1 = length $ fullSequence !! 40
+answer1 :: IO ()
+answer1 = print $ length $ fullSequence !! 40
 
-answer2 :: Int
-answer2 = length $ fullSequence !! 50
+answer2 :: IO ()
+answer2 = print $ length $ fullSequence !! 50
 
 fullSequence = iterate (expandList . groupList) input
 

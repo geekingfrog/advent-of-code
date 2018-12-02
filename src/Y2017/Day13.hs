@@ -3,9 +3,9 @@ module Y2017.Day13 (answer1, answer2) where
 import Data.Foldable
 
 
-answer1, answer2 :: Int
-answer1 = foldl' (\acc (a,b) -> acc + a * b) 0 $ filter (caught 0) input
-answer2 = head [d | d <- [0..], not (any (caught d) input)]
+answer1, answer2 :: IO ()
+answer1 = print $ foldl' (\acc (a,b) -> acc + a * b) 0 $ filter (caught 0) input
+answer2 = print $ head [d | d <- [0..], not (any (caught d) input)]
 
 
 caught :: Int -> (Int, Int) -> Bool

@@ -3,9 +3,9 @@ module Y2017.Day02 (answer1, answer2) where
 import Data.List (sort)
 import qualified Control.Foldl as F
 
-answer1, answer2 :: Int
-answer1 = sum $ map diff input
-answer2 = sum $ map ((\(a, b) -> b `div` a) . findDivisors) input
+answer1, answer2 :: IO ()
+answer1 = print $ sum $ map diff input
+answer2 = print $ sum $ map ((\(a, b) -> b `div` a) . findDivisors) input
 
 
 diff :: [Int] -> Int

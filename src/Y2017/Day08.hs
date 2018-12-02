@@ -16,13 +16,13 @@ import Data.HashMap.Strict as Map
 
 type Parser = Parsec Void Text
 
-answer1, answer2 :: IO Int
-answer1 = maximum . Map.elems . foldl eval Map.empty <$> parseInput
+answer1, answer2 :: IO ()
+answer1 = maximum . Map.elems . foldl eval Map.empty <$> parseInput >>= print
 
 answer2 = do
     instructions <- parseInput
     let allStates = scanl eval Map.empty instructions
-    pure $ maximum $ concatMap Map.elems allStates
+    print $ maximum $ concatMap Map.elems allStates
 
 
 type Register = Text

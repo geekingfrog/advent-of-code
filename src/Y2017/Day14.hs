@@ -17,8 +17,8 @@ import qualified Y2017.Day10 as H -- knot hash related stuff
 import qualified Data.Tree as T
 import qualified Data.Graph as G
 
-answer1, answer2 :: Int
-answer1 = countGridFree input
+answer1, answer2 :: IO ()
+answer1 = print $ countGridFree input
 answer2 =
     let grid = toGrid input
         (_, (bx, by)) = A.bounds grid
@@ -27,7 +27,7 @@ answer2 =
         -- assume bx == by
         rootCoords = fmap (\n -> let (y,x) = n `quotRem` (by+1) in (x,y)) rootNodes
         usedCoords = filter (\c -> isUsed $ grid ! c) rootCoords
-     in length usedCoords
+     in print $ length usedCoords
 
 data Status = Free | Used deriving Show
 

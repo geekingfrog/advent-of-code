@@ -11,11 +11,11 @@ import Tsp
 
 type Parser = Parsec Void String
 
-answer1 :: IO Int
-answer1 = fst . minCycle <$> getData
+answer1 :: IO ()
+answer1 = fst . minCycle <$> getData >>= print
 
-answer2 :: IO Int
-answer2 = fst . maxCycle <$> getData
+answer2 :: IO ()
+answer2 = fst . maxCycle <$> getData >>= print
 
 -- Parsing
 

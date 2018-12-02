@@ -4,9 +4,9 @@ import Control.Monad
 
 type Disc = (Int, Int)
 
-answer1, answer2 :: Int
-answer1 = solve discs
-answer2 = solve discs'
+answer1, answer2 :: IO ()
+answer1 = print $ solve discs
+answer2 = print $ solve discs'
     where discs' = discs ++ [(7, 11)]
 
 discs :: [Disc]

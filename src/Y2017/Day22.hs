@@ -6,20 +6,20 @@ import Control.Monad
 import Data.Foldable
 import qualified Data.HashMap.Strict as Map
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     grid <- parseInput
     let initialState = ((0,-1), (0,0), grid, 0)
     let n = 10000
     let (_, _, _, c) = foldl' (\s _ -> step s) initialState [1..n]
-    pure c
+    print c
 
 answer2 = do
     grid <- parseInput
     let initialState = ((0,-1), (0,0), grid, 0)
     let n = 10000000
     let (_, _, _, c) = foldl' (\s _ -> step2 s) initialState [1..n]
-    pure c
+    print c
 
 data Status = Clean | Infected | Weakened | Flagged deriving Show
 type Coord = (Int, Int)

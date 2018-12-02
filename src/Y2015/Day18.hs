@@ -4,17 +4,17 @@ import qualified Data.Vector as V
 import Control.Monad (fmap)
 import Data.Text (chunksOf, pack, unpack)
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     initialGrid <- getData
     let states = iterate nextState initialGrid
-    return . length . V.filter (==On) $ states !! 100
+    print . length . V.filter (==On) $ states !! 100
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     initialGrid <- getData
     let states = iterate (nextState . turnCornersOn) initialGrid
-    return . length . V.filter (==On) . turnCornersOn $ states !! 100
+    print . length . V.filter (==On) . turnCornersOn $ states !! 100
 
 data LightStatus = On | Off deriving (Eq)
 instance Show LightStatus where

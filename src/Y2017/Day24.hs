@@ -8,15 +8,15 @@ import Data.Monoid
 import Data.List.Split as L
 
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     cs <- parseInput
     let tree = allBridges (0,0) cs
-    pure $ maxStrength tree
+    print $ maxStrength tree
 answer2 = do
     cs <- parseInput
     let tree = allBridges (0,0) cs
-    pure $ snd $ strengthWithLength tree
+    print $ snd $ strengthWithLength tree
 
 testTree :: Rose (Int,Int)
 testTree = Rose (0,1) [Rose (1,2) [], Rose (1,3) [Rose (3,4) [], Rose (3,3) [], Rose (3,5) []]]

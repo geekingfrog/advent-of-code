@@ -6,13 +6,13 @@ import Control.Monad.Primitive
 import Control.Monad.ST.Strict
 import qualified Data.Vector.Mutable as MV
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     raw <- readFile "./data/2017/day05.txt"
-    pure $ countJumps $ map read $ lines raw
+    print $ countJumps $ map read $ lines raw
 answer2 = do
     raw <- readFile "./data/2017/day05.txt"
-    pure $ countJumps2 $ map read $ lines raw
+    print $ countJumps2 $ map read $ lines raw
 
 
 countJumps :: [Int] -> Int

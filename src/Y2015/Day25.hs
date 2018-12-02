@@ -1,7 +1,7 @@
 module Y2015.Day25 (answer1) where
 
-answer1 :: Int
-answer1 = code 3010 3019
+answer1 :: IO ()
+answer1 = print $ code 3010 3019
 
 code i j = go i j 20151125
   where

@@ -6,20 +6,20 @@ import Data.List (scanl, nub)
 type Pos = (Int, Int)
 
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     directions <- getData
     let coords = scanl move (0, 0) directions
-    return $ length . nub $ coords
+    print $ length . nub $ coords
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     directions <- getData
     let santaDirections = takeEven directions
     let robotDirections = takeOdd directions
     let santaHouses     = scanl move (0, 0) santaDirections
     let robotHouses     = scanl move (0, 0) robotDirections
-    return . length . nub $ santaHouses ++ robotHouses
+    print . length . nub $ santaHouses ++ robotHouses
 
 getData = fmap (filter (/='\n')) (readFile "./data/03.txt")
 

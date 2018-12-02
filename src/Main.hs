@@ -89,125 +89,125 @@ main = do
 
 run2015 :: Int -> Int -> IO ()
 run2015 day pbNumber = case day * 10 + pbNumber of
-    11  -> D01.answer1 >>= print
-    12  -> D01.answer2 >>= print
-    21  -> D02.answer1 >>= print
-    22  -> D02.answer2 >>= print
-    31  -> D03.answer1 >>= print
-    32  -> D03.answer2 >>= print
-    41  -> putStrLn D04.answer1
-    42  -> putStrLn D04.answer2
-    51  -> D05.answer1 >>= print
-    52  -> D05.answer2 >>= print
-    61  -> D06.answer1 >>= print
-    62  -> D06.answer2 >>= print
-    71  -> D07.answer1 >>= print
-    72  -> D07.answer2 >>= print
-    81  -> D08.answer1 >>= print
-    82  -> D08.answer2 >>= print
-    91  -> D09.answer1 >>= print
-    92  -> D09.answer2 >>= print
-    101 -> print D10.answer1
-    102 -> print D10.answer2
-    111 -> putStrLn D11.answer1
-    112 -> putStrLn D11.answer2
-    121 -> D12.answer1 >>= print
-    122 -> D12.answer2 >>= print
-    131 -> D13.answer1 >>= print
-    132 -> D13.answer2 >>= print
-    141 -> print D14.answer1
-    142 -> print D14.answer2
-    151 -> print D15.answer1
-    152 -> print D15.answer2
-    161 -> D16.answer1 >>= print
-    162 -> D16.answer2 >>= print
-    171 -> print D17.answer1
-    172 -> print D17.answer2
-    181 -> D18.answer1 >>= print
-    182 -> D18.answer2 >>= print
-    191 -> print D19.answer1
-    192 -> print D19.answer2
-    201 -> print D20.answer1
-    202 -> print D20.answer2
-    211 -> print D21.answer1
-    212 -> print D21.answer2
-    221 -> print D22.answer1
-    222 -> print D22.answer2
-    231 -> D23.answer1 >>= print
-    232 -> D23.answer2 >>= print
-    241 -> print D24.answer1
-    242 -> print D24.answer2
-    251 -> print D25.answer1
-    _   -> print "Invalid puzzle number"
+    11  -> D01.answer1
+    12  -> D01.answer2
+    21  -> D02.answer1
+    22  -> D02.answer2
+    31  -> D03.answer1
+    32  -> D03.answer2
+    41  -> D04.answer1
+    42  -> D04.answer2
+    51  -> D05.answer1
+    52  -> D05.answer2
+    61  -> D06.answer1
+    62  -> D06.answer2
+    71  -> D07.answer1
+    72  -> D07.answer2
+    81  -> D08.answer1
+    82  -> D08.answer2
+    91  -> D09.answer1
+    92  -> D09.answer2
+    101 -> D10.answer1
+    102 -> D10.answer2
+    111 -> D11.answer1
+    112 -> D11.answer2
+    121 -> D12.answer1
+    122 -> D12.answer2
+    131 -> D13.answer1
+    132 -> D13.answer2
+    141 -> D14.answer1
+    142 -> D14.answer2
+    151 -> D15.answer1
+    152 -> D15.answer2
+    161 -> D16.answer1
+    162 -> D16.answer2
+    171 -> D17.answer1
+    172 -> D17.answer2
+    181 -> D18.answer1
+    182 -> D18.answer2
+    191 -> D19.answer1
+    192 -> D19.answer2
+    201 -> D20.answer1
+    202 -> D20.answer2
+    211 -> D21.answer1
+    212 -> D21.answer2
+    221 -> D22.answer1
+    222 -> D22.answer2
+    231 -> D23.answer1
+    232 -> D23.answer2
+    241 -> D24.answer1
+    242 -> D24.answer2
+    251 -> D25.answer1
+    _   -> putStrLn "Invalid puzzle number"
 
 run2016 :: Int -> Int -> IO ()
 run2016 day pbNumber = case day * 10 + pbNumber of
-    111 -> print Y2016D11.answer1
-    112 -> print Y2016D11.answer2
-    151 -> print Y2016D15.answer1
-    152 -> print Y2016D15.answer2
-    192 -> print Y2016D19.answer2
+    111 -> Y2016D11.answer1
+    112 -> Y2016D11.answer2
+    151 -> Y2016D15.answer1
+    152 -> Y2016D15.answer2
+    192 -> Y2016D19.answer2
     221 -> Y2016D22.answer1 >>= print
     222 -> Y2016D22.answer2 >>= print
     _   -> print "Invalid puzzle number"
 
 run2017 :: Int -> Int -> IO ()
 run2017 day pbNumber = case day * 10 + pbNumber of
-    11 -> print Y2017D01.answer1
-    12 -> print Y2017D01.answer2
-    21 -> print Y2017D02.answer1
-    22 -> print Y2017D02.answer2
-    31 -> print Y2017D03.answer1
-    32 -> print Y2017D03.answer2
-    41 -> Y2017D04.answer1 >>= print
-    42 -> Y2017D04.answer2 >>= print
-    51 -> Y2017D05.answer1 >>= print
-    52 -> Y2017D05.answer2 >>= print
-    61 -> print Y2017D06.answer1
-    62 -> print Y2017D06.answer2
-    71 -> Y2017D07.answer1 >>= print
-    72 -> Y2017D07.answer2 >>= print
-    81 -> Y2017D08.answer1 >>= print
-    82 -> Y2017D08.answer2 >>= print
-    91 -> Y2017D09.answer1 >>= print
-    92 -> Y2017D09.answer2 >>= print
-    101 -> print Y2017D10.answer1
-    102 -> print Y2017D10.answer2
-    111 -> Y2017D11.answer1 >>= print
-    112 -> Y2017D11.answer2 >>= print
-    121 -> Y2017D12.answer1 >>= print
-    122 -> Y2017D12.answer2 >>= print
-    131 -> print Y2017D13.answer1
-    132 -> print Y2017D13.answer2
-    141 -> print Y2017D14.answer1
-    142 -> print Y2017D14.answer2
-    151 -> print Y2017D15.answer1
-    152 -> print Y2017D15.answer2
-    161 -> Y2017D16.answer1 >>= putStrLn
-    162 -> Y2017D16.answer2 >>= putStrLn
-    171 -> print Y2017D17.answer1
-    172 -> print Y2017D17.answer2
-    181 -> Y2017D18.answer1 >>= print
-    182 -> Y2017D18.answer2 >>= print
-    191 -> Y2017D19.answer1 >>= print
-    192 -> Y2017D19.answer2 >>= print
-    201 -> Y2017D20.answer1 >>= print
-    202 -> Y2017D20.answer2 >>= print
-    211 -> Y2017D21.answer1 >>= print
-    212 -> Y2017D21.answer2 >>= print
-    221 -> Y2017D22.answer1 >>= print
-    222 -> Y2017D22.answer2 >>= print
-    231 -> Y2017D23.answer1 >>= print
-    232 -> Y2017D23.answer2 >>= print
-    241 -> Y2017D24.answer1 >>= print
-    242 -> Y2017D24.answer2 >>= print
-    251 -> print Y2017D25.answer1
-    _   -> print "Invalid puzzle number"
+    11 -> Y2017D01.answer1
+    12 -> Y2017D01.answer2
+    21 -> Y2017D02.answer1
+    22 -> Y2017D02.answer2
+    31 -> Y2017D03.answer1
+    32 -> Y2017D03.answer2
+    41 -> Y2017D04.answer1
+    42 -> Y2017D04.answer2
+    51 -> Y2017D05.answer1
+    52 -> Y2017D05.answer2
+    61 -> Y2017D06.answer1
+    62 -> Y2017D06.answer2
+    71 -> Y2017D07.answer1
+    72 -> Y2017D07.answer2
+    81 -> Y2017D08.answer1
+    82 -> Y2017D08.answer2
+    91 -> Y2017D09.answer1
+    92 -> Y2017D09.answer2
+    101 -> Y2017D10.answer1
+    102 -> Y2017D10.answer2
+    111 -> Y2017D11.answer1
+    112 -> Y2017D11.answer2
+    121 -> Y2017D12.answer1
+    122 -> Y2017D12.answer2
+    131 -> Y2017D13.answer1
+    132 -> Y2017D13.answer2
+    141 -> Y2017D14.answer1
+    142 -> Y2017D14.answer2
+    151 -> Y2017D15.answer1
+    152 -> Y2017D15.answer2
+    161 -> Y2017D16.answer1
+    162 -> Y2017D16.answer2
+    171 -> Y2017D17.answer1
+    172 -> Y2017D17.answer2
+    181 -> Y2017D18.answer1
+    182 -> Y2017D18.answer2
+    191 -> Y2017D19.answer1
+    192 -> Y2017D19.answer2
+    201 -> Y2017D20.answer1
+    202 -> Y2017D20.answer2
+    211 -> Y2017D21.answer1
+    212 -> Y2017D21.answer2
+    221 -> Y2017D22.answer1
+    222 -> Y2017D22.answer2
+    231 -> Y2017D23.answer1
+    232 -> Y2017D23.answer2
+    241 -> Y2017D24.answer1
+    242 -> Y2017D24.answer2
+    251 -> Y2017D25.answer1
+    _   -> putStrLn "Invalid puzzle number"
 
 run2018 :: Int -> Int -> IO ()
 run2018 day pbNumber = case day * 10 + pbNumber of
-    11 -> Y2018D01.answer1 >>= print
-    12 -> Y2018D01.answer2 >>= print
-    21 -> Y2018D02.answer1 >>= print
-    22 -> Y2018D02.answer2 >>= putStrLn
+    11 -> Y2018D01.answer1
+    12 -> Y2018D01.answer2
+    21 -> Y2018D02.answer1
+    22 -> Y2018D02.answer2
     _ -> print "Invalid puzzle number"

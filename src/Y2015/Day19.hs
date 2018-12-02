@@ -11,14 +11,14 @@ import Control.Monad (fmap)
 
 data Rose a = Rose a [Rose a] deriving (Show, Eq)
 
-answer1 :: Int
-answer1 = length . nub $ replace mapReplacements (split input)
+answer1 :: IO ()
+answer1 = print $ length . nub $ replace mapReplacements (split input)
 
-answer2 :: Int
+answer2 :: IO ()
 answer2 =
     let rose = reductions replacements' input
         err  = error "No solution???"
-    in  fromMaybe err (roseDepth rose)
+    in  print $ fromMaybe err (roseDepth rose)
 
 replace :: M.HashMap String [String] -> [String] -> [String]
 replace _ [] = []

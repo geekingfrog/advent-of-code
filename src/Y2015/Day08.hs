@@ -9,15 +9,15 @@ import Control.Exception (throw)
 
 type Parser = Parsec Void String
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     strings <- getData
-    return $ sum (map length strings) - sum (map countRealChars strings)
+    print $ sum (map length strings) - sum (map countRealChars strings)
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     strings <- getData
-    return $ sum (map (length . show) strings) - sum (map length strings)
+    print $ sum (map (length . show) strings) - sum (map length strings)
 
 getData :: IO [String]
 getData = fmap lines (readFile "./data/08.txt")

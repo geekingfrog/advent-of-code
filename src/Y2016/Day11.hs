@@ -15,9 +15,9 @@ import Data.Bits as Bits
 
 import Debug.Trace as Debug
 
-answer1, answer2 :: Int
-answer1 = solve initialState -- 31 in 4s
-answer2 = solve initialState2 -- 55 in 253s
+answer1, answer2 :: IO ()
+answer1 = print $ solve initialState -- 31 in 4s
+answer2 = print $ solve initialState2 -- 55 in 253s
 
 
 solve :: Building -> Int

@@ -10,17 +10,17 @@ import Control.Monad (fmap)
 
 type Parser = Parsec Void String
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
     prog <- getData
     let states = unfoldr (run prog) (0, 0, 0)
-    return . second $ last states
+    print . second $ last states
 
-answer2 :: IO Int
+answer2 :: IO ()
 answer2 = do
     prog <- getData
     let states = unfoldr (run prog) (1, 0, 0)
-    return . second $ last states
+    print . second $ last states
 
 data Reg = A | B deriving (Show, Eq)
 data Instruction = Half Reg

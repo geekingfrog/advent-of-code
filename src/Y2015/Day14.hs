@@ -3,14 +3,14 @@ module Y2015.Day14 (answer1, answer2) where
 import Data.List (sort, group, maximumBy)
 import Data.Ord (comparing)
 
-answer1 :: Int
-answer1 = maximum $ map (distanceRun inputTime) reindeers
+answer1 :: IO ()
+answer1 = print $ maximum $ map (distanceRun inputTime) reindeers
 
-answer2 :: Int
+answer2 :: IO ()
 answer2 =
     let winners = concatMap winnersAtRound [1 .. inputTime]
         points  = map length $ group $ sort winners
-    in  maximum points
+    in  print $ maximum points
 
 data Reindeer = Reindeer {
   name :: String,

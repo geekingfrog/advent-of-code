@@ -10,9 +10,9 @@ import Data.List as L
 
 type Parser = Parsec Void String
 
-answer1, answer2 :: IO Int
-answer1 = solve 5
-answer2 = solve 18 -- 2766750 in ~30s
+answer1, answer2 :: IO ()
+answer1 = solve 5 >>= print
+answer2 = solve 18 >>= print -- 2766750 in ~30s
 
 
 type A2D a = A.Array (Int, Int) a

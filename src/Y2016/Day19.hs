@@ -3,11 +3,11 @@ module Y2016.Day19 (answer2) where
 import Data.Sequence
 
 
-answer2 :: Int
+answer2 :: IO ()
 answer2 =
     let n = 3018458
         start = fromList [1..n]
-     in index (foldl (\t _ -> steal t) start [1..n-1]) 0
+     in print $ index (foldl (\t _ -> steal t) start [1..n-1]) 0
 
 
 steal :: Seq Int -> Seq Int

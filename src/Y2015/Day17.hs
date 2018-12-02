@@ -1,13 +1,13 @@
 module Y2015.Day17 (answer1, answer2) where
 
-answer1 :: Int
-answer1 = length $ arrangements target containers
+answer1 :: IO ()
+answer1 = print $ length $ arrangements target containers
 
-answer2 :: Int
+answer2 :: IO ()
 answer2 =
     let combinations = arrangements target containers
         minNumber    = minimum $ map length combinations
-    in  length $ filter ((==) minNumber . length) combinations
+    in  print $ length $ filter ((==) minNumber . length) combinations
 
 containers =
     [11, 30, 47, 31, 32, 36, 3, 1, 5, 3, 32, 36, 15, 11, 46, 26, 28, 1, 19, 3]

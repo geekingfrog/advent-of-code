@@ -3,15 +3,15 @@ module Y2015.Day22 (answer1, answer2) where
 import Control.Monad.State
 import Data.Maybe (catMaybes, mapMaybe, fromMaybe)
 
-answer1 :: Int
+answer1 :: IO ()
 answer1 =
     let err = error "no way to win???"
-    in  fromMaybe err (miniMana (allBattles carryBattle initialState))
+    in  print $ fromMaybe err (miniMana (allBattles carryBattle initialState))
 
-answer2 :: Int
+answer2 :: IO ()
 answer2 =
     let err = error "no way to win???"
-    in  fromMaybe err (miniMana (allBattles carryHardBattle initialState))
+    in  print $ fromMaybe err (miniMana (allBattles carryHardBattle initialState))
 
 data Spell = Missile | Drain | Shield | Poison | Recharge deriving (Show, Eq)
 data BattleStatus = Ongoing | Lost | Won deriving (Show, Eq)

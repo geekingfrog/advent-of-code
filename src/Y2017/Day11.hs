@@ -13,17 +13,17 @@ import qualified Data.Text.IO as T
 
 type Parser = Parsec Void T.Text
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     dirs <- parseDirections <$> T.readFile "data/2017/day11.txt"
     let start = (0, 0, 0)
     let final = foldl' walk start dirs
-    pure $ dist final start
+    print $ dist final start
 answer2 = do
     dirs <- parseDirections <$> T.readFile "data/2017/day11.txt"
     let start = (0, 0, 0)
     let all = scanl walk start dirs
-    pure $ maximum $ fmap (dist start) all
+    print $ maximum $ fmap (dist start) all
 
 type Pos = (Int, Int, Int)
 data Dir = N | NE | SE | S | SW | NW deriving (Eq, Show)

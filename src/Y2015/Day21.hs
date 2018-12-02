@@ -3,15 +3,15 @@ module Y2015.Day21 (answer1, answer2) where
 import Data.List (nub, minimumBy, maximumBy)
 import Data.Ord (comparing)
 
-answer1 :: Int
+answer1 :: IO ()
 answer1 =
     let winners = filter ((==Loss) . duelIssue boss) allChara
-    in  cost $ minimumBy (comparing cost) winners
+    in  print $ cost $ minimumBy (comparing cost) winners
 
-answer2 :: Int
+answer2 :: IO ()
 answer2 =
     let losers = filter ((==Win) . duelIssue boss) allChara
-    in  cost $ maximumBy (comparing cost) losers
+    in  print $ cost $ maximumBy (comparing cost) losers
 
 data Issue = Win | Loss deriving (Show, Eq)
 type Hp = Int

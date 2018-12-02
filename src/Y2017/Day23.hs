@@ -24,14 +24,14 @@ import Data.Numbers.Primes
 
 type Parser = Parsec Void String
 
-answer1, answer2 :: IO Int
+answer1, answer2 :: IO ()
 answer1 = do
     instructions <- parseInput "./data/2017/day23.txt"
     let regs = V.replicate (ord 'h' - ord 'a' + 1) 0
     let initialState = (0, regs)
     let prog = unfoldM (runStep instructions)
     let executed = evalState prog initialState
-    pure $ length $ filter isMul executed
+    print $ length $ filter isMul executed
 
 answer2 = do
     -- after a long time trying to see what the program
@@ -39,7 +39,7 @@ answer2 = do
     let b0 = 65 * 100 + 100000
     let c = b0 + 17000
     let ns = [b0,b0 + 17 .. c]
-    pure $ length $ filter (not . isPrime) ns
+    print $ length $ filter (not . isPrime) ns
 
 type Registers = V.Vector Int
 

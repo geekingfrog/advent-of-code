@@ -4,11 +4,11 @@ import Control.Monad (fmap)
 import Data.List.Split (splitOn)
 import Data.List (sort)
 
-answer1 :: IO Int
-answer1 = sum . map giftWrap <$> getData
+answer1 :: IO ()
+answer1 = sum . map giftWrap <$> getData >>= print
 
-answer2 :: IO Int
-answer2 = sum . map giftRibbon <$> getData
+answer2 :: IO ()
+answer2 = sum . map giftRibbon <$> getData >>= print
 
 getData = do
     raw <- fmap lines (readFile "./data/02.txt")

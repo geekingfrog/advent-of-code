@@ -7,11 +7,13 @@ import Data.Maybe
 import Data.Foldable
 import Data.Monoid
 
-answer1, answer2, input :: Int
-answer1 = solve1 input
+answer1, answer2 :: IO ()
+answer1 = print $ solve1 input
 answer2 =
     let (_, _, val) = foldl' (step2 input) (0, 1, Nothing) [1 .. 50 * 10 ^ 6]
-    in  fromMaybe (error "nope") val
+    in  print $ fromMaybe (error "nope") val
+
+input :: Int
 input = 367
 
 

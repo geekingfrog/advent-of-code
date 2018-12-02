@@ -10,15 +10,15 @@ import           Data.Foldable
 import qualified Data.Vector                   as V
 import qualified Data.Map.Strict               as Map
 
-answer1 :: IO Int
+answer1 :: IO ()
 answer1 = do
   ids <- lines <$> readFile "./data/2018/day02.txt"
   let groups = map (foldl' count Map.empty) ids
   let has2   = filter (not . null . Map.filter (== 2)) groups
   let has3   = filter (not . null . Map.filter (== 3)) groups
-  pure $ length has2 * length has3
+  print $ length has2 * length has3
 
-answer2 :: IO String
+answer2 :: IO ()
 answer2 = do
   ids <- lines <$> readFile "./data/2018/day02.txt"
   let boxes = do
@@ -30,7 +30,7 @@ answer2 = do
         pure c
 
   case boxes of
-    (x:_) -> pure x
+    (x:_) -> putStrLn x
     _ -> error "invalid input?"
 
 count :: Map.Map Char Int -> Char -> Map.Map Char Int
