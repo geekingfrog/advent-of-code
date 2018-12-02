@@ -30,11 +30,8 @@ answer2 = do
         pure c
 
   case boxes of
-    [b1, b2] ->
-      let commonLetters = zip b1 b2
-      in  pure $ map fst $ filter (uncurry (==)) commonLetters
+    (x:_) -> pure x
     _ -> error "invalid input?"
-
 
 count :: Map.Map Char Int -> Char -> Map.Map Char Int
 count m k = Map.insertWith (+) k 1 m
