@@ -1,19 +1,24 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Y2018.Day03 (answer1, answer2) where
 
-import Control.Monad
-import Control.Monad.Loops
+import           Control.Monad
+import           Control.Monad.Loops
 
-import qualified Data.IntSet as Set
-import Data.Maybe
-import Data.Functor
-import Data.Void
-import Data.Array as Arr
+import qualified Data.IntSet                   as Set
+import           Data.Maybe
+import           Data.Functor
+import           Data.Void
+import           Data.Array                    as Arr
 
-import Text.Megaparsec
-import Text.Megaparsec.Char
-import Text.Megaparsec.Char.Lexer
+import           Text.Megaparsec
+import           Text.Megaparsec.Char
+import           Text.Megaparsec.Char.Lexer
 
-type Parser = Parsec Void String
+import qualified Data.Text                     as Tx
+import qualified Data.Text.IO                  as Tx.IO
+
+type Parser = Parsec Void Tx.Text
 
 type Id = Int
 data Rect = Rect
@@ -26,7 +31,7 @@ answer1, answer2 :: IO ()
 answer1 = do
   rects <- getData
   let grid = claimMap rects
-  let res = filter ((>1) . snd) (Arr.elems grid)
+  let res = filter ((>1) . length) (Arr.elems grid)
   print $ length res
 
 answer2 = do
@@ -35,8 +40,8 @@ answer2 = do
 
   let grid = claimMap rects
   let overlappingIds = Set.fromList
-        $ concatMap (fromJust . fst)
-        $ filter ((>1) . snd)
+        $ concat
+        $ filter ((>1) . length)
         (Arr.elems grid)
   let allIds = Set.fromList $ map rId rects
 
@@ -52,17 +57,17 @@ gridBounds rects
 
 claimMap rects =
   let vals = concatMap spots rects
-      grid = accumArray (\(i, a) (j, x) -> (i <> Just [j], x+a)) (Nothing, 0) ((0,0), gridBounds rects) vals
+      grid = accumArray (flip (:)) [] ((0,0), gridBounds rects) vals
   in grid
 
-spots :: Rect -> [((Int, Int), (Id, Int))]
+spots :: Rect -> [((Int, Int), Id)]
 spots r =
   let ((x0, y0), (x1, y1)) = coord r
-  in  [((x,y), (rId r, 1)) | x <- [x0..x1], y <- [y0..y1]]
+  in  [((x,y), rId r) | x <- [x0..x1], y <- [y0..y1]]
 
 getData :: IO [Rect]
 getData = do
-  raw <- readFile "data/2018/day03.txt"
+  raw <- Tx.IO.readFile "data/2018/day03.txt"
   case parse dataParser "day03" raw of
     Left err -> error $ show err
     Right x -> pure x
