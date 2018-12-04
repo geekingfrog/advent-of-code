@@ -46,6 +46,7 @@ executable adventofcode
                     , BangPatterns
 
   other-modules: Tsp
+               , Utils.Parser
                , Y2015.Day01
                , Y2015.Day02
                , Y2015.Day03

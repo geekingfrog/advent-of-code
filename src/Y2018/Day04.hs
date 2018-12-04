@@ -3,23 +3,23 @@
 
 module Y2018.Day04 (answer1, answer2) where
 
-import Data.Foldable
-import Control.Monad.Loops as Loops
+import           Data.Foldable
 
-import GHC.Word
-import Text.Megaparsec
-import Text.Megaparsec.Char
-import Text.Megaparsec.Char.Lexer
+import           Text.Megaparsec
+import           Text.Megaparsec.Char
+import           Text.Megaparsec.Char.Lexer
 
-import Data.Function
-import Data.List
-import qualified Data.Map.Strict as Map
+import           Data.Function
+import           Data.List
+import qualified Data.Map.Strict               as Map
 import           Data.Vector                    ( (//) )
 import qualified Data.Vector                   as V
 import           Data.Void
 import           Data.Functor
 import qualified Data.Text                     as Tx
 import qualified Data.Text.IO                  as Tx.IO
+
+import qualified Utils.Parser                  as U
 
 answer1, answer2 :: IO ()
 answer1 = do
@@ -39,7 +39,8 @@ data Date = Date
   , dD :: Int
   , dH :: Int
   , dMin :: Int
-  } deriving Show
+  }
+  deriving (Show, Eq, Ord)
 
 data Shift = Shift
   { sStart :: Date
@@ -69,7 +70,6 @@ type Parser = Parsec Void Tx.Text
 
 getData :: IO [Shift]
 getData = do
-  -- input file sorted beforehand
   raw <- Tx.IO.readFile "data/2018/day04.txt"
   case parse dataParser "day04" raw of
     Left err -> error $ show err
@@ -78,8 +78,11 @@ getData = do
 
 dataParser :: Parser [Shift]
 dataParser = do
-  lines <- parseRawLine `untilM` isEOF
-  pure $ foldl' foldShifts [] lines
+  lines <- U.parseLines parseRawLine
+  let sortedLines = sortOn rawDate lines
+  pure $ foldl' foldShifts [] sortedLines
+    where
+      rawDate = either fst fst
 
 type RawLine = (Either (Date, Int) (Date, SleepStatus))
 
@@ -119,7 +122,6 @@ parseGuardLine = (,)
   <$> parseDate
   <* char ' '
   <*> parseGuard
-  <* char '\n'
 
 parseGuard :: Parser Int
 parseGuard = string "Guard #" *> decimal <* takeWhileP Nothing (/= '\n')
@@ -128,7 +130,7 @@ parseStatuses :: Parser [(Date, SleepStatus)]
 parseStatuses = loop []
   where
     loop acc = do
-      r <- try (isEOF *> fail "eof") <|> try (parseGuardLine $> Nothing) <|> (Just <$> parseStatusLine)
+      r <- try (U.isEOF *> fail "eof") <|> try (parseGuardLine $> Nothing) <|> (Just <$> parseStatusLine)
       case r of
         Nothing -> pure (reverse acc)
         Just s -> loop (s : acc)
@@ -138,16 +140,11 @@ parseStatusLine = (,)
   <$> parseDate
   <* char ' '
   <*> parseStatus
-  <* char '\n'
 
 parseStatus :: Parser SleepStatus
 parseStatus
   =   string "falls asleep" $> Sleep
   <|> string "wakes up" $> Awake
-
-
-isEOF :: Parser Bool
-isEOF = (try eof $> True) <|> pure False
 
 
 testShift1 = Shift
