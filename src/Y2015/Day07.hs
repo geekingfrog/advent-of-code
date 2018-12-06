@@ -58,17 +58,16 @@ eval (Label a) = do
     env <- get
     case M.lookup a env of
         Nothing       -> error $ "Cannot find label " ++ show a
-        -- Just newlabel -> eval newlabel >>= put . M.insert a
         Just newLabel -> do
             result <- eval newLabel
             modify $ M.insert a (Val result)
             return result
 
 eval (Not a     ) = fmap complement (eval a)
-eval (And    a b) = liftA2 (.&.) (eval a) (eval b)
-eval (Or     a b) = liftA2 (.|.) (eval a) (eval b)
-eval (LShift a s) = eval a >>= \res -> return $ shiftL res s
-eval (RShift a s) = eval a >>= \res -> return $ shiftR res s
+eval (And    a b) = (.&.) <$> eval a <*> eval b
+eval (Or     a b) = (.|.) <$> eval a <*> eval b
+eval (LShift a s) = (`shiftL` s) <$> eval a
+eval (RShift a s) = (`shiftR` s) <$> eval a
 
 ------------------------------------------------------------
 --  Parsing
