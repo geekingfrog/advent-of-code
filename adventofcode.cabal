@@ -109,3 +109,4 @@ executable adventofcode
                , Y2018.Day03
                , Y2018.Day04
                , Y2018.Day05
+               , Y2018.Day06
