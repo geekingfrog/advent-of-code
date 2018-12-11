@@ -20,6 +20,7 @@ executable adventofcode
                      , bytestring
                      , megaparsec
                      , vector
+                     , vector-algorithms
                      , unordered-containers
                      , hashable
                      , mtl
@@ -113,3 +114,5 @@ executable adventofcode
                , Y2018.Day07
                , Y2018.Day08
                , Y2018.Day09
+               , Y2018.Day10
+               , Y2018.Day11
