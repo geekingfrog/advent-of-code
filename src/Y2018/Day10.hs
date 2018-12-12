@@ -4,14 +4,16 @@
 module Y2018.Day10 (answer1, answer2) where
 
 import           Control.Monad
+import           Data.Maybe
 import           Data.Foldable
 import qualified Data.Text                     as Tx
 import qualified Data.Text.IO                  as Tx.IO
 import           Data.Void
 import qualified Data.Vector                   as V
-import Data.Functor
+import           Data.Functor
 import qualified Data.Map.Strict               as Map
 import qualified Data.Array                    as Arr
+import qualified Control.Foldl                 as L
 
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -25,11 +27,15 @@ answer1, answer2 :: IO ()
 answer1 = do
   (ps, vs) <- getData
   let allPos = iterate (move vs) ps
-  forM_ (zip [1..] [allPos !! 100]) $ \(i, p) -> do
-    Tx.IO.putStrLn $ Tx.pack $ show i
-    Tx.IO.putStr (pretty p)
-    Tx.IO.putStr "\n"
-answer2 = print "wip2"
+  let (Just x) = find shouldPrint allPos
+  Tx.IO.putStrLn (pretty x)
+
+answer2 = do
+  (ps, vs) <- getData
+  let allPos = iterate (move vs) ps
+  let withIdx = zip [0..] allPos
+  let (Just (i, x)) = find (shouldPrint . snd) withIdx
+  print i
 
 
 infixr 5 .+.
@@ -38,6 +44,11 @@ infixr 5 .+.
 
 move :: V.Vector Point -> V.Vector Point -> V.Vector Point
 move = V.zipWith (.+.)
+
+shouldPrint :: V.Vector Point -> Bool
+shouldPrint v =
+  let (minY, maxY) = boundsY v
+  in abs (maxY - minY) <= 15
 
 pretty :: V.Vector Point -> Tx.Text
 pretty points =
@@ -49,6 +60,15 @@ pretty points =
       line y = Tx.pack [(Arr.!) a (x, y) | x <- [minX..maxX]]
       lines = [line y | y <- [minY..maxY]]
    in Tx.unlines lines
+
+boundsX, boundsY :: V.Vector Point -> (Int, Int)
+boundsX = L.fold (minMax fst)
+boundsY = L.fold (minMax snd)
+
+minMax f
+  = (,)
+  <$> fmap fromJust (L.premap f L.minimum)
+  <*> fmap fromJust (L.premap f L.maximum)
 
 getData :: IO (V.Vector Point, V.Vector Point)
 getData = do
