@@ -5,6 +5,7 @@ module Y2018.Day12 (answer1, answer2) where
 import Control.Monad
 import Data.Maybe
 import Data.Bool
+import Data.List
 
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -36,7 +37,16 @@ answer1 = do
 
 answer2 = do
   (s0, rules) <- getData
-  print $ solve rules s0 50000000000
+  let allStates = iterate (genStep rules) s0
+  -- assume stable pattern before 200 gen
+  let finalLength = lengthState (allStates !! 200)
+  let (Just (i, _)) = find (\(_, s) -> lengthState s == finalLength) (zip [0..] allStates)
+  let target = 50000000000
+  let n = target - i
+  let res = IntSet.foldl' (\acc k -> acc + k + n) 0 (allStates !! i)
+  print res
+
+lengthState s = IntSet.findMax s - IntSet.findMin s
 
 solve :: Rules -> PlantState -> Int -> Int
 solve rules s0 n =
