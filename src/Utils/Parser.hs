@@ -18,4 +18,4 @@ parseLines :: (MonadParsec e s m, Token s ~ Char) => m a -> m [a]
 parseLines p = (p <* char '\n') `Loops.untilM` isEOF
 
 parseLine  :: (MonadParsec e s m, Token s ~ Char) => m a -> m [a]
-parseLine p = p `Loops.untilM` isNewLine
+parseLine = Loops.whileM (not <$> isNewLine)
