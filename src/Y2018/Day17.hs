@@ -28,17 +28,17 @@ type Point = (Int, Int)
 type Grid = A.Array Point Bool
 
 
-flow :: Grid -> [Point] -> S.Set Point -> S.Set Point
-flow _ [] flooded = flooded
-flow grid (s:ss) flooded
+flowStep :: Grid -> [Point] -> S.Set Point -> (S.Set Point, [Point])
+flowStep _ [] flooded = (flooded, [])
+flowStep grid (s:ss) flooded
   = case flowDown grid flooded s of
-      [] -> flow grid ss flooded
+      [] -> flowStep grid ss flooded
       xs@(x:_) ->
         let (sides, sources) = flowSides grid x
             flooded' = insertMany flooded (xs <> sides)
          in if null sources
-               then flow grid ((x .+. (0,-1)) : ss) flooded'
-               else flow grid (ss <> sources) flooded'
+               then flowStep grid ((x .+. (0,-1)) : ss) flooded'
+               else flowStep grid (ss <> sources) flooded'
 
 
 flowDown :: Grid -> S.Set Point -> Point -> [Point]
@@ -136,5 +136,6 @@ test = do
   let source = (499,0)
   -- let flooded = S.fromList $ flowDown grid mempty (source .+. (0,1))
   -- let (flooded', mbSource) = flowSide (1, 0) grid (499,7)
-  let flooded = flow grid [source] mempty
-  Tx.IO.putStr $ prettyGrid grid flooded
+  -- let flooded = flow grid [source] mempty
+  -- Tx.IO.putStr $ prettyGrid grid flooded
+  print "done"

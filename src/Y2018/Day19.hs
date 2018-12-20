@@ -145,7 +145,7 @@ data Instruction = Instruction Ins (Word32, Word32, Word32)
 getData :: IO (Int, V.Vector Instruction)
 getData = do
   raw <- Tx.IO.readFile "data/2018/day19.txt"
-  case parse parseData "day16" raw of
+  case parse parseData "day19" raw of
     Left err -> error $ show err
     Right x -> pure x
 
