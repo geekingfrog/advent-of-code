@@ -20,13 +20,19 @@ import qualified Data.Generics.Product.Fields as GP
 answer1, answer2 :: IO ()
 answer1 = do
   (grid, carts) <- getData
-  let allCarts = iterate (step grid) carts
-  let (Just crashed) = find (not . null) (fmap collided allCarts)
-  mapM_ print (nub $ fmap pos crashed)
+  let allSteps = iterate (stepCarts grid) (mempty, carts)
+  let (Just (crashed, _)) = find ((== 1) . Set.size . fst) allSteps
+  print crashed
 
 answer2 = do
   (grid, carts) <- getData
-  print $ pos $ stepAndRemove grid carts
+  let n = length carts
+  let allSteps = iterate (stepCarts grid) (mempty, carts)
+  let (Just (_, [c])) = find ((== 1) . length . snd) allSteps
+
+  print $ pos c
+  print c
+
 
 type Grid = A.Array Coord Char
 type Coord = (Int, Int)
@@ -60,11 +66,36 @@ collided carts =
 
 data Cart = Cart
   { pos :: Coord
-  -- , speed   :: Coord
   , dir :: Direction
   , nextTurn :: Orientation
   }
   deriving (Show, Generic, Eq, Ord)
+
+-- | move all carts, return a list of non crashed carts
+-- and a set of crashed positions
+stepCarts :: Grid -> (Set.Set Coord, [Cart]) -> (Set.Set Coord, [Cart])
+stepCarts grid (_, carts) =
+  let go acc [] = acc
+      go (carts', positions, crashed) (c:cs)
+        | p' `Set.member` positions = go
+          (filter ((/= p') . pos) carts', positions, Set.insert p' crashed)
+          (filter ((/= p') . pos) cs)
+
+        | otherwise = go
+          ( c' : carts'
+          , Set.insert p' (Set.delete p positions)
+          , crashed
+          )
+          cs
+
+        where c' = stepCart grid c
+              p' = pos c'
+              p = pos c
+
+      initialPos = Set.fromList $ fmap pos carts
+      (carts', _, crashedPos) = go ([], initialPos, mempty) (sort carts)
+
+   in (crashedPos, carts')
 
 stepCart :: Grid -> Cart -> Cart
 stepCart grid c =
