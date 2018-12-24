@@ -37,13 +37,14 @@ answer1 = do
   regex <- getData
   print $ solve regex
 
-answer2 = print "wip 2"
+answer2 = do
+  regex <- getData
+  let withDist = M.toList $ dijkstra (0,0) $ buildMap regex
+  let res = length $ filter (\x -> snd x >= 1000) withDist
+  print res
 
 solve :: Regex -> Int
-solve = snd . minDoors (0,0)
-
-solveSlow :: Regex -> Int
-solveSlow = head . sortOn Down . M.elems . dijkstra (0,0) . buildMap
+solve = head . sortOn Down . M.elems . dijkstra (0,0) . buildMap
 
 buildMap :: Regex -> M.Map Point Cell
 buildMap r =
@@ -62,7 +63,11 @@ stepSym (p, m) (D dir) =
   let (p', cells) = move p dir
       m' = foldl' (\m (k, v) -> M.insert k v m) m cells
    in [(p', m')]
-stepSym start (R rs) = concatMap (stepRegex start) rs
+stepSym start (R rs) =
+  let withDup = concatMap (stepRegex start) rs
+      f m (p, cells) = M.insertWith M.union p cells m
+      deduped = foldl' f mempty withDup
+   in M.toList deduped
 
 move :: Point -> Dir -> (Point, [(Point, Cell)])
 move (x,y) N = ((x,y-2), [((x,y-1), DoorH), ((x,y-2), Room)])
@@ -94,31 +99,6 @@ dijkstra start map = go map S.empty M.empty [(start, 0)]
           distances' = foldl' (\m (x, d) -> M.insertWith f x d m) distances neighbors
           visited' = S.insert p visited
        in go map visited' distances' (neighbors <> ps)
-
-
-
-
-minDoors :: Point -> Regex -> (Point, Int)
-minDoors start (Regex rs) = case rs of
-  [] -> (start, 0)
-  _ -> minDoors' start rs
-
-
-minDoors' :: Point -> [RegexSym] -> (Point, Int)
-minDoors' = go 0
-  where
-    go !acc start [] = (start, acc)
-    go !acc start (x:xs) = case x of
-      D dir -> let s' = fst (move start dir)
-                in go (acc+1) s' xs
-      R rs ->
-        if null rs
-           then go acc start xs
-           else let withDist = fmap (minDoors start) rs
-                    f a b = if a < b then a else b
-                    grouped = foldl' (\m (p,d) -> M.insertWith f p d m) mempty withDist
-                    (dest, d) = head $ sortOn (Down . snd) $ M.toList grouped
-                 in go (d+acc) dest xs
 
 
 
@@ -183,14 +163,12 @@ pretty' = \case
   DoorV -> '|'
   Wall -> '#'
 
-depth :: Regex -> Int
-depth (Regex rs) = case rs of
-  [] -> 0
-  _ -> maximum $ fmap depth' rs
+prettyRegex (Regex syms) =
+  let psym (D dir) = show dir
+      psym (R rs) = "(" <> intercalate "|" (fmap pr rs) <> ")"
+      pr (Regex syms) = concatMap psym syms
+   in "^" <> concatMap psym syms <> "$"
 
-  where
-    depth' (D _) = 0
-    depth' (R xs) = if null xs then 0 else 1 + maximum (fmap depth xs)
 
 test :: IO ()
 test = do
@@ -199,20 +177,23 @@ test = do
   assertDist "^ENWWW(NEEE|SSE(EE|N))$" 10
   assertDist "^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$" 18
   assertDist "^N(ESNNW|N|NN)NNN$" 6
+  raw <- head . lines <$> readFile "./data/2018/day20.txt"
+  let dumped = prettyRegex (buildRegex raw)
+  print $ dumped == raw
   print "done"
 
 assertDist :: String -> Int -> IO ()
 assertDist r expected = do
   let reg = buildRegex r
-  let d = snd (minDoors (0,0) reg)
+  when (prettyRegex reg /= r) $ do
+    putStrLn "invalid parsing?"
+    putStrLn r
+    putStrLn (prettyRegex reg)
+    print reg
+  let d = solve reg
   if d == expected
      then putStrLn "ok"
      else do
        putStrLn r
        putStrLn $ prettyMap $ buildMap reg
        putStrLn $ "got: " <> show d <> " but expected: " <> show expected
-
-
--- 3359 too low
--- 3559 too low
--- 3823 too high
