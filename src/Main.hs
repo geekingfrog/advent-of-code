@@ -76,6 +76,7 @@ import qualified Y2018.Day10 as Y2018D10
 import qualified Y2018.Day11 as Y2018D11
 import qualified Y2018.Day12 as Y2018D12
 import qualified Y2018.Day13 as Y2018D13
+import qualified Y2018.Day14 as Y2018D14
 import qualified Y2018.Day16 as Y2018D16
 import qualified Y2018.Day17 as Y2018D17
 import qualified Y2018.Day18 as Y2018D18
@@ -248,6 +249,8 @@ run2018 day pbNumber = case day * 10 + pbNumber of
     122 -> Y2018D12.answer2
     131 -> Y2018D13.answer1
     132 -> Y2018D13.answer2
+    141 -> Y2018D14.answer1
+    142 -> Y2018D14.answer2
     161 -> Y2018D16.answer1
     162 -> Y2018D16.answer2
     171 -> Y2018D17.answer1
