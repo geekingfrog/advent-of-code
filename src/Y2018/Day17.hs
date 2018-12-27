@@ -9,6 +9,7 @@ import qualified Data.Array                    as A
 import           Data.List
 import qualified Data.Set                      as S
 import           Data.Maybe
+import Control.Monad
 
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
@@ -28,17 +29,20 @@ type Point = (Int, Int)
 type Grid = A.Array Point Bool
 
 
-flowStep :: Grid -> [Point] -> S.Set Point -> (S.Set Point, [Point])
-flowStep _ [] flooded = (flooded, [])
-flowStep grid (s:ss) flooded
-  = case flowDown grid flooded s of
-      [] -> flowStep grid ss flooded
+flowStep :: Grid -> (S.Set Point, [Point]) -> (S.Set Point, [Point])
+flowStep _ (flooded, []) = (flooded, [])
+flowStep grid (flooded, s:ss)
+  = case flowDown grid flooded (s .+. (0,1)) of
+      [] -> (flooded, ss')
       xs@(x:_) ->
-        let (sides, sources) = flowSides grid x
-            flooded' = insertMany flooded (xs <> sides)
+        let flooded1 = insertMany flooded xs
+            (sides, sources) = flowSides grid flooded1 x
+            flooded2 = insertMany flooded1 sides
          in if null sources
-               then flowStep grid ((x .+. (0,-1)) : ss) flooded'
-               else flowStep grid (ss <> sources) flooded'
+               then (flooded2, (x .+. (0,-1)) : ss')
+               else (flooded2, ss <> sources)
+
+  where ss' = nub ss
 
 
 flowDown :: Grid -> S.Set Point -> Point -> [Point]
@@ -50,24 +54,25 @@ flowDown = go []
       | otherwise = acc
 
 
-flowSides :: Grid -> Point -> ([Point], [Point])
-flowSides grid p =
-  let (l, mbSl) = flowSide (-1,0) grid p
-      (r, mbSr) = flowSide ( 1,0) grid p
+flowSides :: Grid -> S.Set Point -> Point -> ([Point], [Point])
+flowSides grid flooded p =
+  let (l, mbSl) = flowSide grid flooded (-1,0) p
+      (r, mbSr) = flowSide grid flooded ( 1,0) p
       newFlooded = l <> r
       newSources = catMaybes [mbSl, mbSr]
    in (newFlooded, newSources)
 
-flowSide :: Point -> Grid -> Point -> ([Point], Maybe Point)
+-- | return (newly flooded points, and maybe a new 'source'
+flowSide :: Grid -> S.Set Point -> Point -> Point -> ([Point], Maybe Point)
 flowSide = go []
   where
-    go acc dir grid p =
+    go acc grid flooded dir p =
       let x = get grid p
           r | x == Just True || isNothing x = (acc, Nothing)
-            | get grid (p .+. (0,1)) == Just False = (p:acc, Just p)
-            | otherwise = go (p:acc) dir grid (p .+. dir)
+            | get grid (p .+. (0,1)) == Just False
+            && (p .+. (0,1)) `S.notMember` flooded = (p:acc, Just p)
+            | otherwise = go (p:acc) grid flooded dir (p .+. dir)
        in r
-      -- | get grid p == Just True = (acc, Nothing)
 
 
 infixr 5 .+.
@@ -90,7 +95,7 @@ prettyGrid g flooded =
   let ((minX, minY), (maxX, maxY)) = A.bounds g
       makeRow y = Tx.pack [prettyChar (x,y) | x <- [minX..maxX]]
       prettyChar p
-        | p == (500,0) = '+'
+        | p == (499,0) = '+'
         | p `S.member` flooded = '~'
         | g ! p = '#'
         | otherwise = '.'
@@ -132,10 +137,12 @@ lineParser = do
 test :: IO ()
 test = do
   grid <- getData
-  print $ A.bounds grid
   let source = (499,0)
-  -- let flooded = S.fromList $ flowDown grid mempty (source .+. (0,1))
-  -- let (flooded', mbSource) = flowSide (1, 0) grid (499,7)
-  -- let flooded = flow grid [source] mempty
-  -- Tx.IO.putStr $ prettyGrid grid flooded
+  let allSteps = iterate (flowStep grid) (mempty, [source])
+
+  forM_ (take 4 allSteps) $ \(flooded, sources) -> do
+    Tx.IO.putStrLn $ prettyGrid grid flooded
+
+  -- Tx.IO.putStrLn $ prettyGrid grid (S.fromList $ flowDown grid mempty (494,5))
+
   print "done"

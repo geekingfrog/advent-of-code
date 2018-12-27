@@ -52,7 +52,12 @@ answer2 = do
   let cpu = mkCpu i
   let cpu' = cpu {regs = regs cpu // [(0,1)]}
   let states = unfoldr (execCPU' instructions) cpu'
-  print $ regs (last states) ! 0
+
+  -- The assembly is a program which sums all the
+  -- divisors of a number stored in register 2
+  let n = regs (states !! 20) ! 2
+
+  print $ sum $ filter (\i -> n `rem` i == 0) [1..n]
 
 
 getVal x st = Just x
@@ -127,18 +132,6 @@ execCPU instructions cpu = do
 
 execCPU' a b = fmap (\x -> (x,x)) (execCPU a b)
 
--- instructions = [minBound..maxBound]
-
--- data Sample = Sample
---   { beforeS :: CPU
---   , afterS :: CPU
---   , instruction :: (Word32, Word32, Word32, Word32)
---   }
---   deriving (Show)
---
--- -- opcode, a, b, c
--- type Instruction = (Word32, Word32, Word32, Word32)
-
 data Instruction = Instruction Ins (Word32, Word32, Word32)
   deriving (Show)
 
@@ -188,6 +181,12 @@ parseInsCode =
   <|> try (string "eqrr" $> Eqrr)
   <|> error "cannot parse instruction"
 
+
+prettyCPU :: CPU -> String
+prettyCPU cpu
+  = show (ipVal cpu)
+  <> "\t|\t"
+  <> intercalate "\t" (V.toList (fmap show (regs cpu)))
 
 test :: IO ()
 test = do
