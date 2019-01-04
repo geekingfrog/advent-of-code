@@ -127,3 +127,4 @@ executable adventofcode
                , Y2018.Day19
                , Y2018.Day20
                , Y2018.Day21
+               , Y2018.Day22
